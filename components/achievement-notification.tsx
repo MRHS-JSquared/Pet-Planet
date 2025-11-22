@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 
+//Structure for notifications
 interface AchievementNotificationProps {
   achievement: {
     title: string
@@ -10,6 +11,7 @@ interface AchievementNotificationProps {
   onClose: () => void
 }
 
+//Notification Popup
 export function AchievementNotification({ achievement, onClose }: AchievementNotificationProps) {
   useEffect(() => {
     if (achievement) {
