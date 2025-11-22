@@ -7,6 +7,7 @@ interface PetStatsProps {
   petState: PetState
 }
 
+//Statistics list
 const stats = [
   { key: "hunger", label: "Hunger", icon: "🍖", color: "bg-accent" },
   { key: "happiness", label: "Happiness", icon: "😊", color: "bg-secondary" },
