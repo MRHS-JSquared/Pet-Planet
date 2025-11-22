@@ -112,21 +112,10 @@ Accessed 18 Nov. 2025.
 miro.medium.com/1.
 Accessed 19 Nov. 2025.
 
-**Sketchfab. “Toon Cat (Free).” *Sketchfab*, 29 June 2016.**
-sketchfab.com/3d-models/toon-cat-free-b2bd1ee7858444bda366110a2d960386.
-Accessed 19 Nov. 2025.
-
-**———. “Shiba.” *Sketchfab*, 16 Nov. 2020.**
-sketchfab.com/3d-models/shiba-faef9fe5ace445e7b2989d1c1ece361c.
-Accessed 19 Nov. 2025.
-
-**———. “White Rabbit.” *Sketchfab*, 8 Jan. 2023.**
-sketchfab.com/3d-models/white-rabbit-c172b26caee64554b30a4da3ea734e80.
-Accessed 19 Nov. 2025.
-
-**———. “Hamster.” *Sketchfab*, 15 Mar. 2019.**
-sketchfab.com/3d-models/hamster-e8f919fbff4f4b8ebb4384cfbc66d4f9.
-Accessed 19 Nov. 2025.
+"Toon Cat FREE" (https://skfb.ly/6TKrP) by Omabuarts Studio is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"Shiba" (https://skfb.ly/6WxVW) by zixisun02 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"White Rabbit" (https://skfb.ly/oCwJF) by Mihail Vladimirovich is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"Hamster" (https://skfb.ly/o6F7R) by Chimachi is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 
 
