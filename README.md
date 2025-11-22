@@ -68,7 +68,7 @@ This project demonstrates:
 - **Cause and Effect**: Actions directly impact pet wellbeing
 - **Goal Setting**: Working toward pet growth and evolution
 
-## Technologies Used
+## Templates/Libraries Used
 
 - Next.js 16 (React Framework)
 - TypeScript (Type Safety)
