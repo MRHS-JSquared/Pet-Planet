@@ -13,6 +13,7 @@ interface PetSetupProps {
   onPetCreated: (pet: Pet) => void
 }
 
+//Pet Type List
 const petTypes: { type: PetType; emoji: string; name: string }[] = [
   { type: "dog", emoji: "🐕", name: "Dog" },
   { type: "cat", emoji: "🐱", name: "Cat" },
@@ -20,6 +21,7 @@ const petTypes: { type: PetType; emoji: string; name: string }[] = [
   { type: "hamster", emoji: "🐹", name: "Hamster" },
 ]
 
+//Creates new pet
 export function PetSetup({ onPetCreated }: PetSetupProps) {
   const [petName, setPetName] = useState("")
   const [selectedType, setSelectedType] = useState<PetType>("dog")
