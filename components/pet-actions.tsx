@@ -12,13 +12,13 @@ interface PetActionsProps {
   onSkipDay: () => void
 }
 
-// Chores - can only be done once per day
+//Chores
 const chores = [
   { id: "clean", label: "Clean", icon: "🫧", cost: 4, description: "Give your pet a bath" },
   { id: "vet", label: "Vet Visit", icon: "🏥", cost: 25, description: "Take to the vet" },
 ]
 
-// Pet care - can be done multiple times
+//Pet Care
 const petCare = [
   { id: "feed", label: "Feed", icon: "🍖", cost: 5, description: "Give your pet food" },
   { id: "rest", label: "Rest", icon: "😴", cost: 0, description: "Let your pet sleep" },
