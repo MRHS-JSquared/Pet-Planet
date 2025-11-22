@@ -78,3 +78,19 @@ This project demonstrates:
 - Three.js (3D Scene)
 - Radix-UI (Clean UI Elements)
 
+## Bibliography (MLA Citations)
+“ Medium.” Medium.com, 2024, miro.medium.com/v2/resize:fit:1200/1. Accessed 18 Nov. 2025.
+“Medium.” Medium.com, 2025, miro.medium.com/1. Accessed 18 Nov. 2025.
+“Pet Sitting App Pitch Deck Template.” Slidesgo.com, 2025, slidesgo.com/theme/pet-sitting-app-pitch-deck. Accessed 18 Nov. 2025.
+Atomicobject.com, 2025, spin.atomicobject.com/wp-content/uploads/React-Typescript.png. Accessed 18 Nov. 2025.
+Wikimedia.org, 2024, upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1200px-Vitejs-logo.svg.png. Accessed 18 Nov. 2025.
+DEV Community, 2023, media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi5vke8fu8g8659hjvv22.jpeg. Accessed 18 Nov. 2025.
+Artezio.com, 2025, artezio.com/wp-content/uploads/2016/08/postcss-logo.png. Accessed 18 Nov. 2025.
+“Medium.” Medium.com, 2025, miro.medium.com/1. Accessed 19 Nov. 2025.
+Sketchfab. “Sketchfab.” Sketchfab, 29 June 2016, sketchfab.com/3d-models/toon-cat-free-b2bd1ee7858444bda366110a2d960386. Accessed 19 Nov. 2025.
+---. “Sketchfab.” Sketchfab, 16 Nov. 2020, sketchfab.com/3d-models/shiba-faef9fe5ace445e7b2989d1c1ece361c. Accessed 19 Nov. 2025.
+---. “Sketchfab.” Sketchfab, 8 Jan. 2023, sketchfab.com/3d-models/white-rabbit-c172b26caee64554b30a4da3ea734e80. Accessed 19 Nov. 2025.
+---. “Sketchfab.” Sketchfab, 15 Mar. 2019, sketchfab.com/3d-models/hamster-e8f919fbff4f4b8ebb4384cfbc66d4f9. Accessed 19 Nov. 2025.
+
+
+
