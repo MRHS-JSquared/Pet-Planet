@@ -113,8 +113,11 @@ miro.medium.com/1.
 Accessed 19 Nov. 2025.
 
 "Toon Cat FREE" (https://skfb.ly/6TKrP) by Omabuarts Studio is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
 "Shiba" (https://skfb.ly/6WxVW) by zixisun02 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
 "White Rabbit" (https://skfb.ly/oCwJF) by Mihail Vladimirovich is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
 "Hamster" (https://skfb.ly/o6F7R) by Chimachi is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 
