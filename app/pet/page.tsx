@@ -122,9 +122,8 @@ export default function VirtualPetPage() {
 
       return updatedPet
     })
-  }, 3000) // 3 seconds
+  }, 10000) // 3 seconds
 
-  
     return () => clearInterval(interval)
   }, [pet, isDead])
 
