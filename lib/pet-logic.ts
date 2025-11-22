@@ -3,35 +3,33 @@ import type { Pet, PetState, PetMood } from "./types"
 /**
  * Get current in-game time based on 2-minute cycle
  * Cycle: 7:00 AM - 8:00 PM (day), 8:00 PM - 7:00 AM (night)
- * 2 minutes real time = 1 full game day = 1440 game minutes
- * ~5 seconds real time = 1 hour in game
+ * 2 minutes real time = 1 full game day
+ * 5 seconds real time = 1 hour in game
  */
 export function getGameTime(createdAt: number): { hour: number; minute: number; isPeriod: "day" | "night" } {
   const now = Date.now()
   const elapsedMs = now - createdAt
 
-  // 1 real second = 12 game minutes (2 minutes * 60 seconds = 120 seconds per day; 1440 / 120 = 12 minutes per second)
+  //1 real second = 12 game minutes
   const elapsedGameMinutes = Math.floor((elapsedMs / 1000) * 12)
 
-  // Start at 7:00 AM (7 * 60 = 420 minutes from midnight)
+  //Start at 7:00 AM 
   const startGameMinutes = 7 * 60
   const gameMinutesInDay = elapsedGameMinutes + startGameMinutes
 
-  // Normalize to 0-1440 (24 hours)
+  //Normalize to 0-1440 (24 hours)
   const normalizedMinutes = gameMinutesInDay % (24 * 60)
 
   const hour = Math.floor(normalizedMinutes / 60)
   const minute = normalizedMinutes % 60
 
-  // Day: 7 AM (7) - 8 PM (20), Night: 8 PM (20) - 7 AM (7)
+  //Day: 7 AM (7) - 8 PM (20), Night: 8 PM (20) - 7 AM (7)
   const isPeriod = hour >= 7 && hour < 20 ? "day" : "night"
 
   return { hour, minute, isPeriod }
 }
 
-/**
- * Get the current game day number
- */
+//Get the current game day number
 export function getGameDay(createdAt: number): number {
   const now = Date.now()
   const elapsedMs = now - createdAt
@@ -39,32 +37,24 @@ export function getGameDay(createdAt: number): number {
   return Math.floor(elapsedGameMinutes / 1440) + 1
 }
 
-/**
- * Check if it's nighttime (sleep hours) - 8 PM to 6 AM
- */
+//Check nightime | 8pm - 6am
 export function isNightTime(createdAt: number): boolean {
   const { hour } = getGameTime(createdAt)
   return hour >= 20 || hour < 6
 }
 
-/**
- * Get today's game day for daily reset tracking
- */
+//Get today's game day for daily reset tracking
 export function getTodayGameDay(createdAt: number): number {
   return getGameDay(createdAt)
 }
 
-/**
- * Check if a new day has started (reset daily actions)
- */
+//Check if a new day has started
 export function shouldResetDailyActions(pet: Pet): boolean {
   const currentDay = getTodayGameDay(pet.createdAt)
   return (pet.lastGameDay || 0) !== currentDay
 }
 
-/**
- * Get today's date in ISO format for daily reset tracking
- */
+//Get today's date in ISO format for daily reset tracking
 export function getTodayDate(): string {
   return new Date().toISOString().split("T")[0]
 }
@@ -72,28 +62,28 @@ export function getTodayDate(): string {
 export function skipToNextDay(pet: Pet): Pet {
   const gameTime = getGameTime(pet.createdAt)
 
-  // Only allow skipping during night (8 PM to 6 AM)
+  //Only allow skipping during night (8 PM to 6 AM)
   if (gameTime.hour < 20 && gameTime.hour >= 6) {
     return pet
   }
 
-  // Current time in minutes from midnight
+  //Current time in minutes from midnight
   const currentTotalMinutes = gameTime.hour * 60 + gameTime.minute
 
-  // Calculate minutes until 7 AM
+  //Calculate minutes until 7 AM
   let minutesUntil7AM: number
   if (gameTime.hour >= 20) {
-    // From 8 PM to 7 AM next day: (24 - currentHour) + 7 hours
+    //From 8 PM to 7 AM next day: (24 - currentHour) + 7 hours
     minutesUntil7AM = (24 * 60 - currentTotalMinutes) + (7 * 60)
   } else {
-    // From midnight to 6 AM, skip to 7 AM same day
+    //From midnight to 6 AM, skip to 7 AM same day
     minutesUntil7AM = (7 * 60) - currentTotalMinutes
   }
 
-  // Convert game minutes to real milliseconds
+  //Convert game minutes to real milliseconds
   const skipMs = (minutesUntil7AM / 12) * 1000
 
-  // Update createdAt by reducing it (moving time forward)
+  //Update createdAt by reducing it (moving time forward)
   const newCreatedAt = pet.createdAt - skipMs
 
   return {
@@ -107,19 +97,17 @@ export function skipToNextDay(pet: Pet): Pet {
   }
 }
 
-/**
- * Calculate the current state and mood of the pet based on its stats
- */
+//Calculate Mood
 export function calculatePetState(pet: Pet): PetState {
   const { hunger, happiness, health, energy, hygiene } = pet
 
-  // Determine mood based on stats
+  //Determine mood based on stats
   let mood: PetMood = "happy"
   let emoji = "😊"
   let message = `${pet.name} is doing great!`
   let color = "text-secondary"
 
-  // Priority: health issues first
+  //Priority: health issues first
   if (health < 30) {
     mood = "sick"
     emoji = "🤒"
@@ -160,9 +148,7 @@ export function calculatePetState(pet: Pet): PetState {
   return { mood, emoji, message, color }
 }
 
-/**
- * Update pet needs based on time passed since last update
- */
+
 export function updatePetNeeds(pet: Pet, lastUpdateTime: number): Pet {
   const now = Date.now()
   const minutesPassed = Math.floor((now - lastUpdateTime) / 60000)
@@ -196,9 +182,7 @@ export function updatePetNeeds(pet: Pet, lastUpdateTime: number): Pet {
   return updatedPet
 }
 
-/**
- * Get pet emoji based on type and stage
- */
+//Pet Emojis
 export function getPetEmoji(type: string, stage: string): string {
   const emojiMap: Record<string, Record<string, string>> = {
     dog: { baby: "🐕", child: "🐕", adult: "🐕" },
