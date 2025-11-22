@@ -1,82 +1,80 @@
-# Pet Planet
+# Pet Planet - FBLA Introduction to Programming
 
-An educational virtual pet game that teaches financial responsibility and pet care through interactive gameplay.
+A comprehensive virtual pet application that teaches financial responsibility and pet ownership through interactive gameplay.
 
-**FBLA Introduction to Programming Project**
+## Features
 
-## Overview
+### Core Pet Care System
+- **Pet Customization**: Choose from 4 pet types (Dog, Cat, Rabbit, Hamster) and name your pet
+- **Pet Stats**: Track hunger, happiness, health, energy, and hygiene (0-100 scale)
+- **Pet Actions**: Feed, play, rest, clean, vet visits, toys, and treats
+- **Pet Growth**: Experience system with levels and evolution stages (baby → child → adult)
+- **Dynamic Moods**: Pet displays different emotions based on care level
 
-Pet Planet combines pet care simulation with financial literacy education. Students learn to manage budgets, make spending decisions, and understand the real costs of pet ownership in an engaging, interactive environment.
+### Financial Responsibility System
+- **Starting Budget**: Begin with $100 in-game currency
+- **Action Costs**: Each care action has an associated cost
+  - Feed: $5
+  - Play: $3
+  - Clean: $4
+  - Vet Visit: $25
+  - Toy: $15
+  - Treat: $8
+  - Rest: Free
+- **Earnings System**: Complete chores to earn money
+  - Wash Dishes: $10
+  - Vacuum Room: $15
+  - Do Laundry: $12
+  - Complete Homework: $20
+  - Yard Work: $25
+  - Organize Closet: $18
+- **Transaction History**: Track all income and expenses
+- **Budget Management**: Monitor balance, total earned, and total spent
 
-## Key Features
+### Technical Features
+- **Data Persistence**: Pet data saved to localStorage
+- **Auto-Updates**: Pet needs decay over time
+- **Input Validation**: Prevents actions when insufficient funds
+- **Modular Code**: Clean component structure with TypeScript
+- **State Management**: React hooks for efficient state handling
 
-### Educational Components
-- **Financial Management**: Start with $100 and learn to budget for pet care
-- **Earning System**: Complete chores to earn money ($10-$25 per chore)
-- **Expense Tracking**: Monitor spending through detailed transaction history
-- **Financial Analytics**: Visual charts showing spending patterns and savings rates
+## How to Use
 
-### Pet Care System
-- **Real-time Needs**: Pets have 5 stats (Hunger, Happiness, Health, Energy, Hygiene) that decay over time
-- **Day/Night Cycle**: 2-minute real-time equals 1 full game day (7 AM - 7 AM)
-- **Action System**: Feed, clean, play, rest, vet visits, and more
-- **Growth System**: Pets gain XP and evolve through Baby, Child, and Adult stages
-- **Consequences**: Pets die if health reaches 0, teaching responsibility
+1. **Create Your Pet**: Enter a name and choose a pet type
+2. **Care for Your Pet**: Use action buttons to feed, play, clean, and care for your pet
+3. **Earn Money**: Complete chores to earn money for pet care
+4. **Monitor Stats**: Watch the stat bars to see what your pet needs
+5. **Track Finances**: View your transaction history and budget
+6. **Level Up**: Gain experience and watch your pet grow!
 
-### Interactive 3D Playground
-- Custom 3D pet models for dog, cat, rabbit, and hamster
-- Interactive toys (ball, block, yarn ball, bone)
-- Dynamic day/night skybox with smooth transitions
-- Realistic animations and shadows
+## Code Structure
 
-### Achievement System
-- 10 achievements to unlock (First Week, Pet Master, Financial Master, etc.)
-- Progress tracking for various milestones
-- Visual notifications when achievements are earned
+- `/app/pet/page.tsx` - Main application logic and state management
+- `/components/pet-setup.tsx` - Initial pet creation interface
+- `/components/pet-display.tsx` - Visual pet representation
+- `/components/pet-stats.tsx` - Stat bars and indicators
+- `/components/pet-actions.tsx` - Care action buttons
+- `/components/earnings-system.tsx` - Chore completion system
+- `/components/financial-tracker.tsx` - Budget and transaction display
+- `/lib/types.ts` - TypeScript type definitions
+- `/lib/pet-logic.ts` - Pet state calculations and updates
+
+## Educational Value
+
+This project demonstrates:
+- **Financial Literacy**: Understanding income, expenses, and budgeting
+- **Responsibility**: Consequences of neglecting care
+- **Time Management**: Balancing earning money and pet care
+- **Cause and Effect**: Actions directly impact pet wellbeing
+- **Goal Setting**: Working toward pet growth and evolution
 
 ## Technologies Used
 
-- Next.js 16 (React framework)
-- TypeScript (Type safety)
-- Three.js (3D graphics)
-- Recharts (Data visualization)
-- Tailwind CSS (Styling)
-- Radix UI (Component primitives)
+- Next.js 16 (React Framework)
+- TypeScript (Type Safety)
+- Tailwind CSS v4 (Styling)
+- shadcn/ui (UI Components)
+- localStorage (Data Persistence)
+- Three.js (3D Scene)
+- Radix-UI (Clean UI Elements)
 
-## Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to play.
-
-## Educational Goals
-
-This project teaches critical financial skills:
-1. **Budgeting** - Managing limited resources effectively
-2. **Income vs. Expenses** - Understanding cash flow
-3. **Opportunity Cost** - Choosing between different spending options
-4. **Emergency Funds** - Keeping reserves for unexpected vet visits
-5. **Responsibility** - Consistent care prevents negative consequences
-6. **Planning** - Anticipating future needs and costs
-
-## Game Mechanics
-
-- Start with $100 budget
-- Complete chores to earn money
-- Pet care costs $0-$25 per action
-- Time flows at 12 game minutes per real second
-- Day/night cycle (Day: 7 AM - 8 PM, Night: 8 PM - 6 AM)
-- Daily chores (clean, vet) can only be done once per day
-- Skip to morning feature available during night hours
-
-## Competition Ready
-
-This project meets FBLA Introduction to Programming requirements:
-- Original code demonstrating programming concepts
-- Educational purpose (financial literacy and responsibility)
-- User-friendly, professional interface
-- Comprehensive functionality with error handling
-- Clear documentation
