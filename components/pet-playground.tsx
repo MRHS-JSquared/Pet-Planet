@@ -100,7 +100,8 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
       { path: string; scale: number; position: [number, number, number] }
     > = {
       dog: { path: "/models/dog/scene.gltf", scale: 1, position: [0, 0.5, 0] },
-      cat: { path: "/models/cat/scene.gltf", scale: 0.02, position: [-10, 0, 0] },
+      //Fail on Purpose and keep Fallback
+      cat: { path: "/modesls/cat/scene.gltf", scale: 0.02, position: [-10, 0, 0] },
       rabbit: { path: "/models/rabbit/scene.gltf", scale: 0.3, position: [0, 1, 0] },
       hamster: { path: "/models/hamster/scene.gltf", scale: 1, position: [0, 0, 0] },
     }
