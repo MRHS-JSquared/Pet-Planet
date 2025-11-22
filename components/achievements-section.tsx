@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Achievement } from "@/lib/types"
 
+//Achievement Section Structure
 interface AchievementsSectionProps {
   unlockedAchievements: string[]
   daysPassed: number
@@ -11,6 +12,7 @@ interface AchievementsSectionProps {
   totalMoney: number
 }
 
+//List of achievements
 const achievements: Achievement[] = [
   {
     id: "first_week",
