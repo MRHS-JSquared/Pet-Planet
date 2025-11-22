@@ -394,7 +394,7 @@ export default function VirtualPetPage() {
             <Link href="/">
               <Button variant="ghost" size="sm">
                 <span className="mr-2">←</span>
-                Home
+                Home - Use as Pause
               </Button>
             </Link>
             <div>
