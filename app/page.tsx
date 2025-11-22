@@ -1,5 +1,6 @@
 "use client"
 
+//Importing Needed Components and Libraries
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FAQDialog } from "@/components/faq-dialog"
@@ -7,13 +8,10 @@ import { AchievementsSection } from "@/components/achievements-section"
 import { GameDirections } from "@/components/game-directions"
 
 export default function HomePage() {
-  // Sample earnings chart data showing earning trends
-  
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-background via-primary/10 to-secondary/20 p-4">
       <div className="w-full max-w-7xl space-y-12 text-center py-12">
-        {/* Hero Section */}
+        {/*Top Section*/}
         <div className="space-y-10">
           <div className="flex justify-center gap-6 text-8xl drop-shadow-xl">
             <span className="animate-bounce-slow">🌍</span>
@@ -28,6 +26,7 @@ export default function HomePage() {
             </span>
           </div>
 
+           {/*Title and Main Idea*/}
           <h1 className="text-6xl font-bold tracking-tight text-foreground sm:text-7xl drop-shadow-md">Pet Planet</h1>
 
           <p className="mx-auto max-w-2xl text-xl text-muted-foreground sm:text-2xl opacity-90">
@@ -35,6 +34,7 @@ export default function HomePage() {
           </p>
         </div>
 
+        {/*Quick Overview*/}
         <div className="rounded-3xl border bg-card/40 p-10 shadow-2xl backdrop-blur-xl space-y-8 max-w-3xl mx-auto">
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="rounded-2xl bg-secondary/10 p-4 space-y-2">
@@ -56,6 +56,7 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/*Buttons to start, get directions, and open FAQ */}
           <div className="flex flex-col gap-3 pt-2">
             <Link href="/pet">
               <Button size="lg" className="w-full text-lg rounded-xl shadow-md">
@@ -75,9 +76,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Minimal Footer */}
+        {/*Footer*/}
         <footer className="pt-4 text-sm text-muted-foreground opacity-75">
-          <p>FBLA Introduction to Programming Project</p>
+          <p>FBLA Introduction to Programming Project - Ehaan Akbar, Danyal Rehman, Guru Velivelli</p>
         </footer>
       </div>
     </div>
