@@ -36,7 +36,7 @@ export function EarningsSystem({ onEarnMoney }: EarningsSystemProps) {
 
     // Set cooldown (30 seconds for demo purposes)
     const newCooldowns = new Map(cooldowns)
-    newCooldowns.set(chore.id, now + 30000)
+    newCooldowns.set(chore.id, now + chore.time*1000)
     setCooldowns(newCooldowns)
 
     // Remove from completed after animation
