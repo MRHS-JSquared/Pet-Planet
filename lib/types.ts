@@ -27,6 +27,12 @@ export interface Pet {
 
   unlockedAchievements: string[]
   daysPassed: number
+
+  // Achievement tracking counters
+  cleanCount?: number
+  vetCount?: number
+  treatCount?: number
+  sleepCount?: number
 }
 
 export interface PetState {

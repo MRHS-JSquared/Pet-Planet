@@ -7,8 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 export function FAQDialog() {
   const faqs = [
     {
-      question: "What is Virtual Pet Care?",
-      answer: "Virtual Pet Care is an interactive game that teaches financial responsibility through pet ownership. You create and care for a virtual pet while managing a budget, learning valuable lessons about earning, spending, and saving money.",
+      question: "What is Pet Planet?",
+      answer: "Pet Planet is an educational game that teaches financial responsibility through virtual pet care. You create and care for a pet while managing a budget, learning valuable lessons about earning, spending, and saving money.",
     },
     {
       question: "How do I get started?",
@@ -68,7 +68,7 @@ export function FAQDialog() {
         <DialogHeader>
           <DialogTitle className="text-2xl">Frequently Asked Questions</DialogTitle>
           <DialogDescription>
-            Everything you need to know about Virtual Pet Care
+            Everything you need to know about Pet Planet
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="mt-4 h-[500px] pr-4">

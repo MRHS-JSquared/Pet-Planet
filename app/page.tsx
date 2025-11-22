@@ -39,55 +39,47 @@ export default function HomePage() {
           <h1 className="text-6xl font-bold tracking-tight text-foreground sm:text-7xl drop-shadow-md">Pet Planet</h1>
 
           <p className="mx-auto max-w-2xl text-xl text-muted-foreground sm:text-2xl opacity-90">
-            A calming, interactive world of pets & responsibility.
+            Learn financial responsibility through caring for your virtual pet!
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Main Card */}
-            <div className="rounded-3xl border bg-card/40 p-10 shadow-2xl backdrop-blur-xl space-y-8">
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="rounded-2xl bg-secondary/10 p-4 space-y-2">
-                  <div className="text-4xl">💰</div>
-                  <h3 className="font-semibold">Budget</h3>
-                </div>
+        <div className="rounded-3xl border bg-card/40 p-10 shadow-2xl backdrop-blur-xl space-y-8 max-w-3xl mx-auto">
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="rounded-2xl bg-secondary/10 p-4 space-y-2">
+              <div className="text-4xl">💰</div>
+              <h3 className="font-semibold">Budget Wisely</h3>
+              <p className="text-xs text-muted-foreground">Manage your money to afford pet care</p>
+            </div>
 
-                <div className="rounded-2xl bg-primary/10 p-4 space-y-2">
-                  <div className="text-4xl">🎯</div>
-                  <h3 className="font-semibold">Care</h3>
-                </div>
+            <div className="rounded-2xl bg-primary/10 p-4 space-y-2">
+              <div className="text-4xl">🎯</div>
+              <h3 className="font-semibold">Care Daily</h3>
+              <p className="text-xs text-muted-foreground">Feed, clean, and play with your pet</p>
+            </div>
 
-                <div className="rounded-2xl bg-accent/10 p-4 space-y-2">
-                  <div className="text-4xl">📊</div>
-                  <h3 className="font-semibold">Progress</h3>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 pt-2">
-                <Link href="/pet">
-                  <Button size="lg" className="w-full text-lg rounded-xl shadow-md">
-                    <span className="mr-2">🚀</span>
-                    Play
-                  </Button>
-                </Link>
-
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <GameDirections />
-                  </div>
-                  <div className="flex-1">
-                    <FAQDialog />
-                  </div>
-                </div>
-              </div>
+            <div className="rounded-2xl bg-accent/10 p-4 space-y-2">
+              <div className="text-4xl">📊</div>
+              <h3 className="font-semibold">Track Progress</h3>
+              <p className="text-xs text-muted-foreground">Watch your pet grow and level up</p>
             </div>
           </div>
 
-          {/* Right Column - Achievements */}
-          <div className="lg:col-span-1">
-            <AchievementsSection unlockedAchievements={[]} daysPassed={0} petLevel={1} totalMoney={100} />
+          <div className="flex flex-col gap-3 pt-2">
+            <Link href="/pet">
+              <Button size="lg" className="w-full text-lg rounded-xl shadow-md">
+                <span className="mr-2">🚀</span>
+                Start Your Pet Journey
+              </Button>
+            </Link>
+
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <GameDirections />
+              </div>
+              <div className="flex-1">
+                <FAQDialog />
+              </div>
+            </div>
           </div>
         </div>
 

@@ -40,11 +40,11 @@ export function getGameDay(createdAt: number): number {
 }
 
 /**
- * Check if it's nighttime (sleep hours)
+ * Check if it's nighttime (sleep hours) - 8 PM to 6 AM
  */
 export function isNightTime(createdAt: number): boolean {
-  const { isPeriod } = getGameTime(createdAt)
-  return isPeriod === "night"
+  const { hour } = getGameTime(createdAt)
+  return hour >= 20 || hour < 6
 }
 
 /**
@@ -72,24 +72,34 @@ export function getTodayDate(): string {
 export function skipToNextDay(pet: Pet): Pet {
   const gameTime = getGameTime(pet.createdAt)
 
-  if (gameTime.isPeriod !== "night") {
+  // Only allow skipping during night (8 PM to 6 AM)
+  if (gameTime.hour < 20 && gameTime.hour >= 6) {
     return pet
   }
 
   // Current time in minutes from midnight
   const currentTotalMinutes = gameTime.hour * 60 + gameTime.minute
 
-  // Minutes until 7 AM tomorrow (calculate how many minutes from now to 7 AM)
-  // If it's 20:00 (8 PM), we need 11 hours to reach 7 AM = 660 minutes
-  const minutesUntil7AM = 24 * 60 - currentTotalMinutes + 7 * 60
+  // Calculate minutes until 7 AM
+  let minutesUntil7AM: number
+  if (gameTime.hour >= 20) {
+    // From 8 PM to 7 AM next day: (24 - currentHour) + 7 hours
+    minutesUntil7AM = (24 * 60 - currentTotalMinutes) + (7 * 60)
+  } else {
+    // From midnight to 6 AM, skip to 7 AM same day
+    minutesUntil7AM = (7 * 60) - currentTotalMinutes
+  }
 
-  // Convert game minutes to real milliseconds and subtract from createdAt to skip forward
+  // Convert game minutes to real milliseconds
   const skipMs = (minutesUntil7AM / 12) * 1000
+
+  // Update createdAt by reducing it (moving time forward)
+  const newCreatedAt = pet.createdAt - skipMs
 
   return {
     ...pet,
-    createdAt: pet.createdAt - skipMs,
-    lastGameDay: getTodayGameDay(pet.createdAt - skipMs),
+    createdAt: newCreatedAt,
+    lastGameDay: getTodayGameDay(newCreatedAt),
     completedActionsToday: {},
     hunger: Math.max(0, pet.hunger - 40),
     energy: Math.max(0, pet.energy - 30),

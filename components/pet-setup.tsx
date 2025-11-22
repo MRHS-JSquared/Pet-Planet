@@ -56,9 +56,10 @@ export function PetSetup({ onPetCreated }: PetSetupProps) {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-4xl font-bold">Welcome to Virtual Pet!</CardTitle>
+          <div className="text-6xl mb-4">🌍</div>
+          <CardTitle className="text-4xl font-bold">Welcome to Pet Planet!</CardTitle>
           <CardDescription className="text-lg">
-            Create your pet and learn about the financial responsibility of pet ownership
+            Create your pet and learn financial responsibility through pet care
           </CardDescription>
         </CardHeader>
         <CardContent>

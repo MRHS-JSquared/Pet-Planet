@@ -27,12 +27,14 @@ const petCare = [
 
 export function PetActions({ onAction, money, pet, onSkipDay }: PetActionsProps) {
   const isNight = isNightTime(pet.createdAt)
-  const currentDay = getTodayGameDay(pet.createdAt)
   const completedToday = pet.completedActionsToday || {}
 
   let visibleActions = []
+  let showSkipButton = false
+
   if (isNight) {
     visibleActions = [{ id: "sleep", label: "Sleep", icon: "🛏️", cost: 0, description: "Rest overnight" }]
+    showSkipButton = true
   } else {
     visibleActions = [...petCare, ...chores]
   }
@@ -87,9 +89,9 @@ export function PetActions({ onAction, money, pet, onSkipDay }: PetActionsProps)
             })}
           </div>
 
-          {isNight && (
+          {showSkipButton && (
             <Button onClick={onSkipDay} variant="secondary" className="w-full mt-4">
-              ⏭️ Skip to Daytime
+              Skip to Morning (7 AM)
             </Button>
           )}
         </div>

@@ -25,9 +25,9 @@ export function GameDirections() {
               <h4 className="font-semibold text-base">Game Basics</h4>
               <ul className="space-y-1 text-muted-foreground ml-4">
                 <li>• A full day lasts 2 minutes in real time</li>
-                <li>• Day runs from 7 AM to 8 PM, night from 8 PM to 7 AM</li>
+                <li>• Day runs from 7 AM to 8 PM, night from 8 PM to 6 AM</li>
                 <li>• Your pet stats constantly decrease and need attention</li>
-                <li>• Neglecting your pet results in death - teach responsibility!</li>
+                <li>• Neglecting your pet results in death - teaches responsibility!</li>
               </ul>
             </div>
 
@@ -54,8 +54,8 @@ export function GameDirections() {
             <div className="space-y-2">
               <h4 className="font-semibold text-base">Night Time</h4>
               <ul className="space-y-1 text-muted-foreground ml-4">
-                <li>• At night (8 PM - 7 AM), only sleep is available</li>
-                <li>• Use "Skip to Daytime" to fast-forward through night</li>
+                <li>• At night (8 PM - 6 AM), only sleep is available</li>
+                <li>• Use "Skip to Morning" to fast-forward to 7 AM</li>
                 <li>• Skipping reduces hunger and other stats significantly</li>
               </ul>
             </div>

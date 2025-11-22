@@ -14,6 +14,7 @@ import { ClockDisplay } from "@/components/clock-display"
 import { Button } from "@/components/ui/button"
 import { AchievementsSection } from "@/components/achievements-section"
 import { GameDirections } from "@/components/game-directions"
+import { AchievementNotification } from "@/components/achievement-notification"
 import type { Pet, Transaction } from "@/lib/types"
 import {
   calculatePetState,
@@ -211,9 +212,24 @@ export default function VirtualPetPage() {
           newUnlockedAchievements.push("pet_master")
           achievementUnlocked = { title: "Pet Master", unlockedIcon: "👑" }
         }
+        if (newLevel === 50 && money >= 1000 && !newUnlockedAchievements.includes("legend")) {
+          newUnlockedAchievements.push("legend")
+          achievementUnlocked = { title: "Legend", unlockedIcon: "⭐" }
+        }
       }
 
-      if (action !== "sleep") {
+      // Check day-based achievements
+      const currentDay = getTodayGameDay(updatedPet.createdAt)
+      if (currentDay >= 7 && !newUnlockedAchievements.includes("first_week")) {
+        newUnlockedAchievements.push("first_week")
+        achievementUnlocked = { title: "First Week", unlockedIcon: "🎉" }
+      }
+      if (currentDay >= 30 && !newUnlockedAchievements.includes("marathon")) {
+        newUnlockedAchievements.push("marathon")
+        achievementUnlocked = { title: "Marathon", unlockedIcon: "🏃" }
+      }
+
+      if (action !== "sleep" && action !== "rest" && action !== "play" && action !== "feed" && action !== "treat") {
         if (!updatedPet.completedActionsToday) {
           updatedPet.completedActionsToday = {}
         }
@@ -242,17 +258,22 @@ export default function VirtualPetPage() {
   }
 
   const handleEarnMoney = (amount: number, description: string) => {
+    addTransaction(description, amount)
     setMoney((prev) => {
       const newMoney = prev + amount
+
+      // Check total earned (not current balance)
+      const totalEarned = transactions
+        .filter((t) => t.amount > 0)
+        .reduce((sum, t) => sum + t.amount, 0) + amount
+
       setPet((prevPet) => {
         if (!prevPet) return null
         const newUnlockedAchievements = [...(prevPet.unlockedAchievements || [])]
-        let achievementUnlocked = null
 
-        if (newMoney >= 500 && !newUnlockedAchievements.includes("financial_master")) {
+        if (totalEarned >= 500 && !newUnlockedAchievements.includes("financial_master")) {
           newUnlockedAchievements.push("financial_master")
-          achievementUnlocked = { title: "Financial Master", unlockedIcon: "💎" }
-          setPendingAchievement(achievementUnlocked)
+          setPendingAchievement({ title: "Financial Master", unlockedIcon: "💎" })
         }
 
         return {
@@ -262,7 +283,6 @@ export default function VirtualPetPage() {
       })
       return newMoney
     })
-    addTransaction(description, amount)
   }
 
   const addTransaction = (description: string, amount: number) => {
@@ -292,10 +312,18 @@ export default function VirtualPetPage() {
   const handleSkipDay = () => {
     setPet((prevPet) => {
       if (!prevPet) return null
+      const beforeDay = getTodayGameDay(prevPet.createdAt)
       const skippedPet = skipToNextDay(prevPet)
-      skippedPet.daysPassed += 1
+      const afterDay = getTodayGameDay(skippedPet.createdAt)
+
+      // Increment daysPassed if we actually moved to a new day
+      if (afterDay > beforeDay) {
+        skippedPet.daysPassed = (prevPet.daysPassed || 0) + 1
+      }
+
       return skippedPet
     })
+    setLastUpdate(Date.now())
   }
 
   if (!pet) {
@@ -332,6 +360,7 @@ export default function VirtualPetPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
+      <AchievementNotification achievement={pendingAchievement} onClose={() => setPendingAchievement(null)} />
       <div className="mx-auto max-w-7xl space-y-4">
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -342,58 +371,53 @@ export default function VirtualPetPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Virtual Pet Care</h1>
+              <h1 className="text-3xl font-bold text-foreground">Pet Planet</h1>
               <p className="text-sm text-muted-foreground">
-                Day {pet.daysPassed || 0} - Keep your pet alive and teach financial responsibility!
+                Day {getTodayGameDay(pet.createdAt)} - Learn financial responsibility through pet care!
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handleSkipDay}
-              className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/90"
-            >
-              Skip Day
-            </button>
-            <button
-              onClick={handleReset}
-              className="rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
-            >
-              Reset Pet
-            </button>
-          </div>
+          <Button onClick={handleReset} variant="destructive" size="sm">
+            Reset Pet
+          </Button>
         </header>
 
         <ClockDisplay createdAt={pet.createdAt} />
 
-        <div className="space-y-4">
-          {/* Playground - primary focus */}
-          <PetPlayground pet={pet} onAction={handleAction} />
-
-          {/* Stats and Actions - secondary focus */}
-          <div className="grid gap-4 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-4">
-              <PetDisplay pet={pet} petState={petState} />
-              <PetActions onAction={handleAction} money={money} pet={pet} onSkipDay={handleSkipDay} />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Main Content - Pet Care */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="rounded-xl border bg-card p-6">
+              <h2 className="text-xl font-bold mb-4">Pet Care</h2>
+              <div className="space-y-4">
+                <PetPlayground pet={pet} onAction={handleAction} />
+                <PetDisplay pet={pet} petState={petState} />
+                <PetStats pet={pet} petState={petState} />
+                <PetActions onAction={handleAction} money={money} pet={pet} onSkipDay={handleSkipDay} />
+              </div>
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-4">
-              <PetStats pet={pet} petState={petState} />
-              <EarningsSystem onEarnMoney={handleEarnMoney} />
-              <FinancialTracker money={money} transactions={transactions} />
-              <AchievementsSection
-                unlockedAchievements={pet.unlockedAchievements || []}
-                daysPassed={pet.daysPassed || 0}
-                petLevel={pet.level || 1}
-                totalMoney={money}
-              />
+            <div className="rounded-xl border bg-card p-6">
+              <h2 className="text-xl font-bold mb-4">Financial Management</h2>
+              <div className="space-y-4">
+                <FinancialAnalytics money={money} transactions={transactions} />
+              </div>
             </div>
           </div>
-        </div>
 
-        <FinancialAnalytics money={money} transactions={transactions} />
-        <GameDirections />
+          {/* Sidebar */}
+          <div className="space-y-4">
+            <EarningsSystem onEarnMoney={handleEarnMoney} />
+            <FinancialTracker money={money} transactions={transactions} />
+            <AchievementsSection
+              unlockedAchievements={pet.unlockedAchievements || []}
+              daysPassed={getTodayGameDay(pet.createdAt)}
+              petLevel={pet.level || 1}
+              totalMoney={money}
+            />
+            <GameDirections />
+          </div>
+        </div>
       </div>
     </div>
   )

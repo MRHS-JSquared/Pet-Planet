@@ -12,25 +12,30 @@ interface PetPlaygroundProps {
   onAction: (action: string, cost: number) => void
 }
 
-function getSkyColor(hour: number): THREE.Color {
-  const dayColor = new THREE.Color(0x87ceeb)
-  const nightColor = new THREE.Color(0x1a1a2e)
+function getSkyColor(hour: number, minute: number): THREE.Color {
+  const dayColor = new THREE.Color(0x87ceeb) // Sky blue
+  const sunriseColor = new THREE.Color(0xffa07a) // Light salmon
+  const sunsetColor = new THREE.Color(0xff6b6b) // Sunset red
+  const nightColor = new THREE.Color(0x1a1a2e) // Dark night
 
-  let t = 0
-
-  if (hour >= 7 && hour < 19) {
-    // Full day (7 AM to 7 PM)
+  // Full day (8 AM to 6 PM)
+  if (hour >= 8 && hour < 18) {
     return dayColor
-  } else if (hour === 6) {
-    // Sunrise: 6 AM to 7 AM - smooth fade
-    t = 0.5
+  }
+  // Sunrise transition (6 AM to 8 AM)
+  else if (hour >= 6 && hour < 8) {
+    const totalMinutes = (hour - 6) * 60 + minute
+    const t = totalMinutes / 120 // 0 to 1 over 2 hours
     return new THREE.Color().lerpColors(nightColor, dayColor, t)
-  } else if (hour === 19) {
-    // Sunset: 7 PM to 8 PM - smooth fade
-    t = 0.5
+  }
+  // Sunset transition (6 PM to 8 PM)
+  else if (hour >= 18 && hour < 20) {
+    const totalMinutes = (hour - 18) * 60 + minute
+    const t = totalMinutes / 120 // 0 to 1 over 2 hours
     return new THREE.Color().lerpColors(dayColor, nightColor, t)
-  } else {
-    // Full night (8 PM to 6 AM)
+  }
+  // Full night (8 PM to 6 AM)
+  else {
     return nightColor
   }
 }
@@ -56,7 +61,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     const scene = new THREE.Scene()
 
     const gameTime = getGameTime(pet.createdAt)
-    scene.background = getSkyColor(gameTime.hour)
+    scene.background = getSkyColor(gameTime.hour, gameTime.minute)
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
     camera.position.set(0, 3, 8)
@@ -268,7 +273,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
       })
 
       const currentTime = getGameTime(pet.createdAt)
-      scene.background = getSkyColor(currentTime.hour)
+      scene.background = getSkyColor(currentTime.hour, currentTime.minute)
 
       renderer.render(scene, camera)
     }
