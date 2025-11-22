@@ -2,11 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { Transaction } from "@/lib/types"
 
+//Tracker structure
 interface FinancialTrackerProps {
   money: number
   transactions: Transaction[]
 }
 
+//Tracks finances
 export function FinancialTracker({ money, transactions }: FinancialTrackerProps) {
   const totalSpent = transactions.filter((t) => t.amount < 0).reduce((sum, t) => sum + Math.abs(t.amount), 0)
 
