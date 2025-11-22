@@ -1,4 +1,4 @@
-// Pet type definition
+//Pet type definition
 export type PetType = "dog" | "cat" | "rabbit" | "hamster"
 export type PetStage = "baby" | "child" | "adult"
 export type PetMood = "happy" | "sad" | "sick" | "energetic" | "tired" | "hungry" | "dirty"
@@ -10,25 +10,25 @@ export interface Pet {
   level: number
   experience: number
 
-  // Core stats (0-100)
+  //Core stats
   hunger: number
   happiness: number
   health: number
   energy: number
   hygiene: number
 
-  // Timestamps
+  //Timestamps
   createdAt: number
   lastFed: number
   lastPlayed: number
   lastCleaned: number
-  lastGameDay: number // Track game day instead of real date
-  completedActionsToday: Record<string, boolean> // Track which chores were done today
+  lastGameDay: number 
+  completedActionsToday: Record<string, boolean> 
 
   unlockedAchievements: string[]
   daysPassed: number
 
-  // Achievement tracking counters
+  //Achievement tracking counters
   cleanCount?: number
   vetCount?: number
   treatCount?: number
