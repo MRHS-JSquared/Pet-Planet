@@ -4,11 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import type { Transaction } from "@/lib/types"
 
+//Analytics Structure
 interface FinancialAnalyticsProps {
   money: number
   transactions: Transaction[]
 }
 
+//https://developer.mozilla.org/en-US/docs/Web/JavaScript used for algorithms and in built functions
 export function FinancialAnalytics({ money, transactions }: FinancialAnalyticsProps) {
   const totalSpent = transactions.filter((t) => t.amount < 0).reduce((sum, t) => sum + Math.abs(t.amount), 0)
   const totalEarned = transactions.filter((t) => t.amount > 0).reduce((sum, t) => sum + t.amount, 0)
