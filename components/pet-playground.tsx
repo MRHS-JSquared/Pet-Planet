@@ -7,40 +7,42 @@ import { Button } from "@/components/ui/button"
 import { getGameTime } from "@/lib/pet-logic"
 import type { Pet } from "@/lib/types"
 
+//Playground Structure
 interface PetPlaygroundProps {
   pet: Pet
   onAction: (action: string, cost: number) => void
 }
 
 function getSkyColor(hour: number, minute: number): THREE.Color {
-  const dayColor = new THREE.Color(0x87ceeb) // Sky blue
-  const sunriseColor = new THREE.Color(0xffa07a) // Light salmon
-  const sunsetColor = new THREE.Color(0xff6b6b) // Sunset red
-  const nightColor = new THREE.Color(0x1a1a2e) // Dark night
+  const dayColor = new THREE.Color(0x87ceeb) //Sky blue
+  const sunriseColor = new THREE.Color(0xffa07a) //Light salmon
+  const sunsetColor = new THREE.Color(0xff6b6b) //Sunset red
+  const nightColor = new THREE.Color(0x1a1a2e) //Dark night
 
-  // Full day (8 AM to 6 PM)
+  //Full day (8 AM to 6 PM)
   if (hour >= 8 && hour < 18) {
     return dayColor
   }
-  // Sunrise transition (6 AM to 8 AM)
+  //Sunrise transition (6 AM to 8 AM)
   else if (hour >= 6 && hour < 8) {
     const totalMinutes = (hour - 6) * 60 + minute
     const t = totalMinutes / 120 // 0 to 1 over 2 hours
     return new THREE.Color().lerpColors(nightColor, dayColor, t)
   }
-  // Sunset transition (6 PM to 8 PM)
+  //Sunset transition (6 PM to 8 PM)
   else if (hour >= 18 && hour < 20) {
     const totalMinutes = (hour - 18) * 60 + minute
     const t = totalMinutes / 120 // 0 to 1 over 2 hours
     return new THREE.Color().lerpColors(dayColor, nightColor, t)
   }
-  // Full night (8 PM to 6 AM)
+  //Full night (8 PM to 6 AM)
   else {
     return nightColor
   }
 }
 
 export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
+  //Setup THREE.JS
   const mountRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<{
     scene: THREE.Scene
@@ -53,6 +55,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
   const [selectedToy, setSelectedToy] = useState<string | null>(null)
 
   useEffect(() => {
+    //Setup Three Scene
     if (!mountRef.current) return
 
     const width = mountRef.current.clientWidth
@@ -90,7 +93,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     floor.receiveShadow = true
     scene.add(floor)
 
-    // Back wall
+    //Back wall
     const wallGeometry = new THREE.PlaneGeometry(20, 15)
     const wallMaterial = new THREE.MeshStandardMaterial({
       color: 0xf5f5dc,
@@ -109,6 +112,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     let petColor = 0x8b4513
     let bodySize = { width: 0.8, height: 0.6, depth: 1.2 }
 
+    //Setup Pet Geometry
     switch (pet.type) {
       case "dog":
         petColor = 0x8b4513
@@ -175,9 +179,10 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
 
     scene.add(petMesh)
 
+    //Setup Toy Geometry
     const toys: (THREE.Mesh | THREE.Object3D)[] = []
 
-    // Ball
+    //Ball
     const ballGeometry = new THREE.SphereGeometry(0.3, 16, 16)
     const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
     const ball = new THREE.Mesh(ballGeometry, ballMaterial)
@@ -187,7 +192,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     scene.add(ball)
     toys.push(ball)
 
-    // Block
+    //Block
     const cubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
     const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
@@ -199,7 +204,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
 
     const yarnGroup = new THREE.Group()
     yarnGroup.position.set(0, 0.4, 4)
-    const yarnColor = 0xff69b4 // Hot pink for yarn
+    const yarnColor = 0xff69b4
     const yarnSphereMaterial = new THREE.MeshStandardMaterial({ color: yarnColor })
 
     for (let i = 0; i < 8; i++) {
@@ -220,7 +225,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     scene.add(yarnGroup)
     toys.push(yarnGroup)
 
-    // Bone
+    //Bone
     const boneGeometry = new THREE.CapsuleGeometry(0.15, 0.8, 4, 8)
     const boneMaterial = new THREE.MeshStandardMaterial({ color: 0xf5f5dc })
     const bone = new THREE.Mesh(boneGeometry, boneMaterial)
