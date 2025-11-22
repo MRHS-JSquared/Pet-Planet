@@ -9,12 +9,12 @@ interface EarningsSystemProps {
 }
 
 const chores = [
-  { id: "dishes", label: "Wash Dishes", icon: "🍽️", reward: 10, time: 5 },
-  { id: "vacuum", label: "Vacuum Room", icon: "🧹", reward: 15, time: 10 },
-  { id: "laundry", label: "Do Laundry", icon: "👕", reward: 12, time: 8 },
-  { id: "homework", label: "Complete Homework", icon: "📚", reward: 20, time: 15 },
-  { id: "yard", label: "Yard Work", icon: "🌱", reward: 25, time: 20 },
-  { id: "organize", label: "Organize Closet", icon: "🗄️", reward: 18, time: 12 },
+  { id: "dishes", label: "Wash Dishes", icon: "🍽️", reward: 10, time: 120 },
+  { id: "vacuum", label: "Vacuum Room", icon: "🧹", reward: 15, time: 120 },
+  { id: "laundry", label: "Do Laundry", icon: "👕", reward: 12, time: 120 },
+  { id: "homework", label: "Complete Homework", icon: "📚", reward: 20, time: 120 },
+  { id: "yard", label: "Yard Work", icon: "🌱", reward: 25, time: 120 },
+  { id: "organize", label: "Organize Closet", icon: "🗄️", reward: 18, time: 120 },
 ]
 
 export function EarningsSystem({ onEarnMoney }: EarningsSystemProps) {
