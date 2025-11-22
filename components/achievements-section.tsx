@@ -126,7 +126,7 @@ export function AchievementsSection({
                   {isUnlocked ? achievement.unlockedIcon : achievement.icon}
                 </div>
 
-                {/* Hover tooltip */}
+                {/*Hover*/}
                 {hoveredId === achievement.id && (
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-40 bg-foreground text-background text-xs rounded-lg p-2 text-center whitespace-normal z-10">
                     <p className="font-semibold">{achievement.title}</p>
