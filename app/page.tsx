@@ -8,15 +8,7 @@ import { GameDirections } from "@/components/game-directions"
 
 export default function HomePage() {
   // Sample earnings chart data showing earning trends
-  const earningsData = [
-    { day: "Mon", earnings: 0 },
-    { day: "Tue", earnings: 25 },
-    { day: "Wed", earnings: 45 },
-    { day: "Thu", earnings: 75 },
-    { day: "Fri", earnings: 110 },
-    { day: "Sat", earnings: 155 },
-    { day: "Sun", earnings: 200 },
-  ]
+  
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-background via-primary/10 to-secondary/20 p-4">
