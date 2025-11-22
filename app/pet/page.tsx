@@ -100,6 +100,34 @@ export default function VirtualPetPage() {
     return () => clearInterval(interval)
   }, [pet, lastUpdate, isDead])
 
+  useEffect(() => {
+  if (!pet || isDead) return
+
+  const interval = setInterval(() => {
+    setPet((prevPet) => {
+      if (!prevPet) return null
+
+      // Decrease each stat by 1%, clamp at 0
+      const updatedPet = { ...prevPet }
+      updatedPet.hunger = Math.max(updatedPet.hunger - 1, 0)
+      updatedPet.happiness = Math.max(updatedPet.happiness - 1, 0)
+      updatedPet.health = Math.max(updatedPet.health - 1, 0)
+      updatedPet.energy = Math.max(updatedPet.energy - 1, 0)
+      updatedPet.hygiene = Math.max(updatedPet.hygiene - 1, 0)
+
+      // Check if pet died
+      if (updatedPet.health <= 0) {
+        setIsDead(true)
+      }
+
+      return updatedPet
+    })
+  }, 3000) // 3 seconds
+
+  
+    return () => clearInterval(interval)
+  }, [pet, isDead])
+
   // Also trigger UI updates every second for clock
   useEffect(() => {
     if (!pet || isDead) return
