@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import type { Pet, PetState } from "@/lib/types"
 import { getPetEmoji } from "@/lib/pet-logic"
 
+//Pet Display Structure
 interface PetDisplayProps {
   pet: Pet
   petState: PetState
