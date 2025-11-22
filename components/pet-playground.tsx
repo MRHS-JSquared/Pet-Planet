@@ -1,0 +1,390 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import * as THREE from "three"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { getGameTime } from "@/lib/pet-logic"
+import type { Pet } from "@/lib/types"
+
+interface PetPlaygroundProps {
+  pet: Pet
+  onAction: (action: string, cost: number) => void
+}
+
+function getSkyColor(hour: number): THREE.Color {
+  // Day colors (bright sky blue)
+  const dayColor = new THREE.Color(0x87ceeb)
+  // Night colors (deep indigo)
+  const nightColor = new THREE.Color(0x1a1a2e)
+
+  // Smooth transition: 6 AM to 7 AM (sunrise), 7 PM to 8 PM (sunset)
+  // Before 6 AM or after 8 PM: full night
+  // 6 AM to 7 AM: fade from night to day
+  // 7 AM to 7 PM: full day
+  // 7 PM to 8 PM: fade from day to night
+  // After 8 PM to next 6 AM: full night
+
+  if (hour >= 7 && hour < 19) {
+    // Full day (7 AM to 7 PM)
+    return dayColor
+  } else if (hour === 6) {
+    // Sunrise: 6 AM to 7 AM
+    const t = 0.5 // Mid-transition
+    return nightColor.clone().lerp(dayColor, t)
+  } else if (hour === 19) {
+    // Sunset: 7 PM to 8 PM
+    const t = 0.5 // Mid-transition
+    return dayColor.clone().lerp(nightColor, t)
+  } else {
+    // Full night (8 PM to 6 AM)
+    return nightColor
+  }
+}
+
+export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
+  const mountRef = useRef<HTMLDivElement>(null)
+  const sceneRef = useRef<{
+    scene: THREE.Scene
+    camera: THREE.PerspectiveCamera
+    renderer: THREE.WebGLRenderer
+    petMesh: THREE.Group | THREE.Object3D
+    toys: (THREE.Mesh | THREE.Object3D)[]
+    animationId: number | null
+  } | null>(null)
+  const [selectedToy, setSelectedToy] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!mountRef.current) return
+
+    const width = mountRef.current.clientWidth
+    const height = 500
+
+    const scene = new THREE.Scene()
+
+    const gameTime = getGameTime(pet.createdAt)
+    scene.background = getSkyColor(gameTime.hour)
+
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+    camera.position.set(0, 3, 8)
+    camera.lookAt(0, 1, 0)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setSize(width, height)
+    renderer.shadowMap.enabled = true
+    mountRef.current.appendChild(renderer.domElement)
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
+    scene.add(ambientLight)
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
+    directionalLight.position.set(5, 10, 5)
+    directionalLight.castShadow = true
+    scene.add(directionalLight)
+
+    const floorGeometry = new THREE.PlaneGeometry(20, 20)
+    const floorMaterial = new THREE.MeshStandardMaterial({
+      color: 0xd2b48c,
+      roughness: 0.8,
+    })
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial)
+    floor.rotation.x = -Math.PI / 2
+    floor.receiveShadow = true
+    scene.add(floor)
+
+    // Back wall
+    const wallGeometry = new THREE.PlaneGeometry(20, 15)
+    const wallMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf5f5dc,
+      roughness: 0.7,
+    })
+    const backWall = new THREE.Mesh(wallGeometry, wallMaterial)
+    backWall.position.z = -10
+    backWall.position.y = 7.5
+    backWall.receiveShadow = true
+    scene.add(backWall)
+
+    const petMesh: THREE.Group | THREE.Object3D = new THREE.Group()
+    const petGroup = petMesh as THREE.Group
+    petGroup.position.set(0, 0.5, 0)
+
+    let petColor = 0x8b4513
+    let bodySize = { width: 0.8, height: 0.6, depth: 1.2 }
+
+    switch (pet.type) {
+      case "dog":
+        petColor = 0x8b4513
+        bodySize = { width: 0.8, height: 0.6, depth: 1.2 }
+        break
+      case "cat":
+        petColor = 0xff8c00
+        bodySize = { width: 0.6, height: 0.5, depth: 1.0 }
+        break
+      case "rabbit":
+        petColor = 0xffffff
+        bodySize = { width: 0.5, height: 0.6, depth: 0.8 }
+        break
+      case "hamster":
+        petColor = 0xd2691e
+        bodySize = { width: 0.4, height: 0.4, depth: 0.5 }
+        break
+    }
+
+    const bodyGeometry = new THREE.BoxGeometry(bodySize.width, bodySize.height, bodySize.depth)
+    const petMaterial = new THREE.MeshStandardMaterial({ color: petColor })
+    const body = new THREE.Mesh(bodyGeometry, petMaterial)
+    body.castShadow = true
+    petGroup.add(body)
+
+    const headSize = bodySize.width * 0.7
+    const headGeometry = new THREE.SphereGeometry(headSize, 16, 16)
+    const head = new THREE.Mesh(headGeometry, petMaterial)
+    head.position.set(0, bodySize.height * 0.3, bodySize.depth * 0.7)
+    head.castShadow = true
+    petGroup.add(head)
+
+    if (pet.type === "rabbit") {
+      const earGeometry = new THREE.ConeGeometry(0.15, 0.6, 8)
+      const leftEar = new THREE.Mesh(earGeometry, petMaterial)
+      leftEar.position.set(-0.2, bodySize.height * 0.3 + 0.5, bodySize.depth * 0.7)
+      leftEar.castShadow = true
+      petGroup.add(leftEar)
+
+      const rightEar = new THREE.Mesh(earGeometry, petMaterial)
+      rightEar.position.set(0.2, bodySize.height * 0.3 + 0.5, bodySize.depth * 0.7)
+      rightEar.castShadow = true
+      petGroup.add(rightEar)
+    }
+
+    const eyeGeometry = new THREE.SphereGeometry(0.08, 8, 8)
+    const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 })
+    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial)
+    leftEye.position.set(-0.15, bodySize.height * 0.3 + 0.1, bodySize.depth * 0.7 + headSize * 0.8)
+    petGroup.add(leftEye)
+
+    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial)
+    rightEye.position.set(0.15, bodySize.height * 0.3 + 0.1, bodySize.depth * 0.7 + headSize * 0.8)
+    petGroup.add(rightEye)
+
+    if (pet.type === "dog" || pet.type === "cat") {
+      const tailGeometry = new THREE.CylinderGeometry(0.1, 0.05, 0.8, 8)
+      const tail = new THREE.Mesh(tailGeometry, petMaterial)
+      tail.position.set(0, bodySize.height * 0.2, -bodySize.depth * 0.7)
+      tail.rotation.x = Math.PI / 4
+      tail.castShadow = true
+      petGroup.add(tail)
+    }
+
+    scene.add(petMesh)
+
+    const toys: (THREE.Mesh | THREE.Object3D)[] = []
+
+    // Ball
+    const ballGeometry = new THREE.SphereGeometry(0.3, 16, 16)
+    const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
+    const ball = new THREE.Mesh(ballGeometry, ballMaterial)
+    ball.position.set(-3, 0.3, 2)
+    ball.castShadow = true
+    ball.userData = { type: "ball" }
+    scene.add(ball)
+    toys.push(ball)
+
+    // Block
+    const cubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
+    const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
+    cube.position.set(3, 0.25, 2)
+    cube.castShadow = true
+    cube.userData = { type: "block" }
+    scene.add(cube)
+    toys.push(cube)
+
+    const yarnGroup = new THREE.Group()
+    yarnGroup.position.set(0, 0.4, 4)
+    const yarnColor = 0xff69b4 // Hot pink for yarn
+    const yarnSphereMaterial = new THREE.MeshStandardMaterial({ color: yarnColor })
+
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2
+      const sphereGeometry = new THREE.SphereGeometry(0.2, 8, 8)
+      const sphere = new THREE.Mesh(sphereGeometry, yarnSphereMaterial)
+      sphere.position.set(Math.cos(angle) * 0.3, 0, Math.sin(angle) * 0.3)
+      sphere.castShadow = true
+      yarnGroup.add(sphere)
+    }
+
+    const centerSphere = new THREE.SphereGeometry(0.15, 8, 8)
+    const centerMesh = new THREE.Mesh(centerSphere, yarnSphereMaterial)
+    centerMesh.castShadow = true
+    yarnGroup.add(centerMesh)
+
+    yarnGroup.userData = { type: "yarn" }
+    scene.add(yarnGroup)
+    toys.push(yarnGroup)
+
+    // Bone
+    const boneGeometry = new THREE.CapsuleGeometry(0.15, 0.8, 4, 8)
+    const boneMaterial = new THREE.MeshStandardMaterial({ color: 0xf5f5dc })
+    const bone = new THREE.Mesh(boneGeometry, boneMaterial)
+    bone.position.set(-2, 0.15, -2)
+    bone.rotation.z = Math.PI / 2
+    bone.castShadow = true
+    bone.userData = { type: "bone" }
+    scene.add(bone)
+    toys.push(bone)
+
+    sceneRef.current = {
+      scene,
+      camera,
+      renderer,
+      petMesh,
+      toys,
+      animationId: null,
+    }
+
+    let time = 0
+    const animate = () => {
+      const animationId = requestAnimationFrame(animate)
+      if (sceneRef.current) {
+        sceneRef.current.animationId = animationId
+      }
+
+      time += 0.01
+
+      if (petMesh instanceof THREE.Group) {
+        petMesh.position.y = 0.5 + Math.sin(time * 2) * 0.05
+        petMesh.rotation.y = Math.sin(time * 0.5) * 0.3
+      }
+
+      toys.forEach((toy, index) => {
+        if (toy instanceof THREE.Mesh) {
+          toy.rotation.y += 0.01 * (index + 1)
+          toy.position.y = toy.userData.originalY || toy.position.y
+          toy.position.y += Math.sin(time * 2 + index) * 0.02
+          if (!toy.userData.originalY) {
+            toy.userData.originalY = toy.position.y
+          }
+        } else if (toy instanceof THREE.Group) {
+          toy.rotation.y += 0.01 * (index + 1)
+          toy.position.y = toy.userData.originalY || toy.position.y
+          toy.position.y += Math.sin(time * 2 + index) * 0.02
+          if (!toy.userData.originalY) {
+            toy.userData.originalY = toy.position.y
+          }
+        }
+      })
+
+      const currentTime = getGameTime(pet.createdAt)
+      scene.background = getSkyColor(currentTime.hour)
+
+      renderer.render(scene, camera)
+    }
+
+    animate()
+
+    const handleResize = () => {
+      if (!mountRef.current) return
+      const newWidth = mountRef.current.clientWidth
+      camera.aspect = newWidth / height
+      camera.updateProjectionMatrix()
+      renderer.setSize(newWidth, height)
+    }
+
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      if (sceneRef.current?.animationId) {
+        cancelAnimationFrame(sceneRef.current.animationId)
+      }
+      if (mountRef.current && renderer.domElement && mountRef.current.contains(renderer.domElement)) {
+        mountRef.current.removeChild(renderer.domElement)
+      }
+      renderer.dispose()
+    }
+  }, [pet.type, pet.createdAt])
+
+  const handleToyInteraction = (toyType: string) => {
+    setSelectedToy(toyType)
+    onAction("play", 0)
+
+    if (sceneRef.current) {
+      const toy = sceneRef.current.toys.find((t) => t.userData.type === (toyType === "yarn" ? "yarn" : toyType))
+      if (toy) {
+        const targetPosition = new THREE.Vector3(0, 0.5, 2)
+        const duration = 1000
+        const startPosition = toy.position.clone()
+        const startTime = Date.now()
+
+        const moveToy = () => {
+          const elapsed = Date.now() - startTime
+          const progress = Math.min(elapsed / duration, 1)
+
+          toy.position.lerpVectors(startPosition, targetPosition, progress)
+
+          if (progress < 1) {
+            requestAnimationFrame(moveToy)
+          } else {
+            setTimeout(() => {
+              toy.position.copy(startPosition)
+              setSelectedToy(null)
+            }, 1000)
+          }
+        }
+
+        moveToy()
+      }
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <span>🎮</span>
+          Virtual Playground
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div ref={mountRef} className="w-full overflow-hidden rounded-lg border" style={{ height: "500px" }} />
+
+        <div className="flex gap-2 justify-center flex-wrap">
+          <Button
+            onClick={() => handleToyInteraction("ball")}
+            disabled={selectedToy !== null}
+            variant={selectedToy === "ball" ? "default" : "outline"}
+            size="sm"
+          >
+            🔴 Ball
+          </Button>
+          <Button
+            onClick={() => handleToyInteraction("block")}
+            disabled={selectedToy !== null}
+            variant={selectedToy === "block" ? "default" : "outline"}
+            size="sm"
+          >
+            🟩 Block
+          </Button>
+          <Button
+            onClick={() => handleToyInteraction("yarn")}
+            disabled={selectedToy !== null}
+            variant={selectedToy === "yarn" ? "default" : "outline"}
+            size="sm"
+          >
+            🧶 Yarn Ball
+          </Button>
+          <Button
+            onClick={() => handleToyInteraction("bone")}
+            disabled={selectedToy !== null}
+            variant={selectedToy === "bone" ? "default" : "outline"}
+            size="sm"
+          >
+            🦴 Bone
+          </Button>
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground">Click toys to play with {pet.name}!</p>
+      </CardContent>
+    </Card>
+  )
+}
