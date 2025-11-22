@@ -387,8 +387,11 @@ export default function VirtualPetPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
+      {/*Achievement Notification Popup*/}
       <AchievementNotification achievement={pendingAchievement} onClose={() => setPendingAchievement(null)} />
+      
       <div className="mx-auto max-w-7xl space-y-4">
+        {/*Home Button, Day Count, and Reset Button*/}
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link href="/">
@@ -398,9 +401,9 @@ export default function VirtualPetPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Pet Planet</h1>
+              <h1 className="text-5xl font-bold text-foreground">Pet Planet</h1>
               <p className="text-sm text-muted-foreground">
-                Day {getTodayGameDay(pet.createdAt)} - Learn financial responsibility through pet care!
+                Day {getTodayGameDay(pet.createdAt)}
               </p>
             </div>
           </div>
@@ -409,10 +412,11 @@ export default function VirtualPetPage() {
           </Button>
         </header>
 
+        {/*Clock and Timing*/}
         <ClockDisplay createdAt={pet.createdAt} />
 
+        {/*Playground, Display, Statistics, Actions, and Finances | Main care section*/}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Main Content - Pet Care */}
           <div className="lg:col-span-2 space-y-6">
             <div className="rounded-xl border bg-card p-6">
               <h2 className="text-xl font-bold mb-4">Pet Care</h2>
@@ -432,7 +436,6 @@ export default function VirtualPetPage() {
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-4">
             <EarningsSystem onEarnMoney={handleEarnMoney} />
             <FinancialTracker money={money} transactions={transactions} />
