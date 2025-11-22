@@ -1,0 +1,11 @@
+Model Information:
+* title:	White Rabbit
+* source:	https://sketchfab.com/3d-models/white-rabbit-c172b26caee64554b30a4da3ea734e80
+* author:	Mr.Michael (https://sketchfab.com/Mr.Michael)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "White Rabbit" (https://sketchfab.com/3d-models/white-rabbit-c172b26caee64554b30a4da3ea734e80) by Mr.Michael (https://sketchfab.com/Mr.Michael) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

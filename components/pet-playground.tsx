@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getGameTime } from "@/lib/pet-logic"
@@ -14,29 +15,20 @@ interface PetPlaygroundProps {
 }
 
 function getSkyColor(hour: number, minute: number): THREE.Color {
-  const dayColor = new THREE.Color(0x87ceeb) //Sky blue
-  const sunriseColor = new THREE.Color(0xffa07a) //Light salmon
-  const sunsetColor = new THREE.Color(0xff6b6b) //Sunset red
-  const nightColor = new THREE.Color(0x1a1a2e) //Dark night
+  const dayColor = new THREE.Color(0x87ceeb)
+  const sunriseColor = new THREE.Color(0xffa07a)
+  const sunsetColor = new THREE.Color(0xff6b6b)
+  const nightColor = new THREE.Color(0x1a1a2e)
 
-  //Full day (8 AM to 6 PM)
   if (hour >= 8 && hour < 18) {
     return dayColor
-  }
-  //Sunrise transition (6 AM to 8 AM)
-  else if (hour >= 6 && hour < 8) {
-    const totalMinutes = (hour - 6) * 60 + minute
-    const t = totalMinutes / 120 // 0 to 1 over 2 hours
+  } else if (hour >= 6 && hour < 8) {
+    const t = ((hour - 6) * 60 + minute) / 120
     return new THREE.Color().lerpColors(nightColor, dayColor, t)
-  }
-  //Sunset transition (6 PM to 8 PM)
-  else if (hour >= 18 && hour < 20) {
-    const totalMinutes = (hour - 18) * 60 + minute
-    const t = totalMinutes / 120 // 0 to 1 over 2 hours
+  } else if (hour >= 18 && hour < 20) {
+    const t = ((hour - 18) * 60 + minute) / 120
     return new THREE.Color().lerpColors(dayColor, nightColor, t)
-  }
-  //Full night (8 PM to 6 AM)
-  else {
+  } else {
     return nightColor
   }
 }
@@ -55,7 +47,6 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
   const [selectedToy, setSelectedToy] = useState<string | null>(null)
 
   useEffect(() => {
-    //Setup Three Scene
     if (!mountRef.current) return
 
     const width = mountRef.current.clientWidth
@@ -84,35 +75,43 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     scene.add(directionalLight)
 
     const floorGeometry = new THREE.PlaneGeometry(20, 20)
-    const floorMaterial = new THREE.MeshStandardMaterial({
-      color: 0xd2b48c,
-      roughness: 0.8,
-    })
+    const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xd2b48c, roughness: 0.8 })
     const floor = new THREE.Mesh(floorGeometry, floorMaterial)
     floor.rotation.x = -Math.PI / 2
     floor.receiveShadow = true
     scene.add(floor)
 
-    //Back wall
     const wallGeometry = new THREE.PlaneGeometry(20, 15)
-    const wallMaterial = new THREE.MeshStandardMaterial({
-      color: 0xf5f5dc,
-      roughness: 0.7,
-    })
+    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xf5f5dc, roughness: 0.7 })
     const backWall = new THREE.Mesh(wallGeometry, wallMaterial)
     backWall.position.z = -10
     backWall.position.y = 7.5
     backWall.receiveShadow = true
     scene.add(backWall)
 
-    const petMesh: THREE.Group | THREE.Object3D = new THREE.Group()
-    const petGroup = petMesh as THREE.Group
+    // ---------------------------------------------------------
+    //  PET MODEL LOADING (GLTF folder loader with fallback)
+    // ---------------------------------------------------------
+    const loader = new GLTFLoader()
+    const petGroup = new THREE.Group()
     petGroup.position.set(0, 0.5, 0)
+    scene.add(petGroup)
 
+    // Editable per-pet model transform config (tweak later)
+    const PET_MODEL_CONFIG: Record<
+      string,
+      { path: string; scale: number; position: [number, number, number] }
+    > = {
+      dog: { path: "/models/dog/scene.gltf", scale: 1, position: [0, 0, 0] },
+      cat: { path: "/models/cat/scene.gltf", scale: 1, position: [0, 0, 0] },
+      rabbit: { path: "/models/rabbit/scene.gltf", scale: 1, position: [0, 0, 0] },
+      hamster: { path: "/models/hamster/scene.gltf", scale: 1, position: [0, 0, 0] },
+    }
+
+    // --- Create original primitive fallback (exactly as before) ---
     let petColor = 0x8b4513
     let bodySize = { width: 0.8, height: 0.6, depth: 1.2 }
 
-    //Setup Pet Geometry
     switch (pet.type) {
       case "dog":
         petColor = 0x8b4513
@@ -132,6 +131,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
         break
     }
 
+    // Build fallback primitive exactly like original
     const bodyGeometry = new THREE.BoxGeometry(bodySize.width, bodySize.height, bodySize.depth)
     const petMaterial = new THREE.MeshStandardMaterial({ color: petColor })
     const body = new THREE.Mesh(bodyGeometry, petMaterial)
@@ -177,12 +177,75 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
       petGroup.add(tail)
     }
 
-    scene.add(petMesh)
+    // Save a reference to the fallback in case GLTF replaces it later
+    // We'll keep petGroup as root (we replace children if model loads)
+    // ---------------------------------------------------------
 
-    //Setup Toy Geometry
+    // Attempt to load GLTF model from folder (path from config)
+    const cfg = PET_MODEL_CONFIG[pet.type] || { path: `/models/${pet.type}/scene.gltf`, scale: 1, position: [0, 0, 0] }
+
+    loader.load(
+      cfg.path,
+      (gltf) => {
+        try {
+          const model = gltf.scene.clone(true)
+
+          // Clear fallback children (leave petGroup root)
+          while (petGroup.children.length) {
+            const child = petGroup.children[0]
+            petGroup.remove(child)
+            // dispose geometries/materials of fallback to be safe
+            if ((child as THREE.Mesh).geometry) {
+              try {
+                ;((child as THREE.Mesh).geometry as THREE.BufferGeometry).dispose()
+              } catch {}
+            }
+            if ((child as THREE.Mesh).material) {
+              const m = (child as THREE.Mesh).material
+              if (Array.isArray(m)) {
+                m.forEach((mat) => mat.dispose && mat.dispose())
+              } else {
+                ;(m as THREE.Material).dispose && (m as THREE.Material).dispose()
+              }
+            }
+          }
+
+          // Apply config transform
+          model.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.castShadow = true
+              child.receiveShadow = true
+              // ensure standard material can receive lights
+              if (child.material && (child.material as any).isMeshStandardMaterial === false) {
+                // leave as-is — usually gltf materials are fine
+              }
+            }
+          })
+
+          model.scale.set(cfg.scale, cfg.scale, cfg.scale)
+          model.position.set(cfg.position[0], cfg.position[1], cfg.position[2])
+
+          petGroup.add(model)
+
+          if (sceneRef.current) {
+            sceneRef.current.petMesh = petGroup
+          }
+        } catch (err) {
+          console.error("Error processing loaded GLTF for", pet.type, err)
+        }
+      },
+      undefined,
+      (err) => {
+        // If the model fails to load, keep the original primitive fallback in place
+        console.warn(`Failed to load GLTF for ${pet.type} at ${cfg.path}. Using fallback.`, err)
+      }
+    )
+
+    // ---------------------------------------------------------
+
+    // Setup Toy Geometry (unchanged)
     const toys: (THREE.Mesh | THREE.Object3D)[] = []
 
-    //Ball
     const ballGeometry = new THREE.SphereGeometry(0.3, 16, 16)
     const ballMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
     const ball = new THREE.Mesh(ballGeometry, ballMaterial)
@@ -192,7 +255,6 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     scene.add(ball)
     toys.push(ball)
 
-    //Block
     const cubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
     const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
@@ -206,29 +268,21 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     yarnGroup.position.set(0, 0.4, 4)
     const yarnColor = 0xff69b4
     const yarnSphereMaterial = new THREE.MeshStandardMaterial({ color: yarnColor })
-
     for (let i = 0; i < 8; i++) {
       const angle = (i / 8) * Math.PI * 2
-      const sphereGeometry = new THREE.SphereGeometry(0.2, 8, 8)
-      const sphere = new THREE.Mesh(sphereGeometry, yarnSphereMaterial)
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), yarnSphereMaterial)
       sphere.position.set(Math.cos(angle) * 0.3, 0, Math.sin(angle) * 0.3)
       sphere.castShadow = true
       yarnGroup.add(sphere)
     }
-
-    const centerSphere = new THREE.SphereGeometry(0.15, 8, 8)
-    const centerMesh = new THREE.Mesh(centerSphere, yarnSphereMaterial)
+    const centerMesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), yarnSphereMaterial)
     centerMesh.castShadow = true
     yarnGroup.add(centerMesh)
-
     yarnGroup.userData = { type: "yarn" }
     scene.add(yarnGroup)
     toys.push(yarnGroup)
 
-    //Bone
-    const boneGeometry = new THREE.CapsuleGeometry(0.15, 0.8, 4, 8)
-    const boneMaterial = new THREE.MeshStandardMaterial({ color: 0xf5f5dc })
-    const bone = new THREE.Mesh(boneGeometry, boneMaterial)
+    const bone = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.8, 4, 8), new THREE.MeshStandardMaterial({ color: 0xf5f5dc }))
     bone.position.set(-2, 0.15, -2)
     bone.rotation.z = Math.PI / 2
     bone.castShadow = true
@@ -240,7 +294,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
       scene,
       camera,
       renderer,
-      petMesh,
+      petMesh: petGroup,
       toys,
       animationId: null,
     }
@@ -248,33 +302,21 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     let time = 0
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
-      if (sceneRef.current) {
-        sceneRef.current.animationId = animationId
-      }
+      if (sceneRef.current) sceneRef.current.animationId = animationId
 
       time += 0.01
 
-      if (petMesh instanceof THREE.Group) {
-        petMesh.position.y = 0.5 + Math.sin(time * 2) * 0.05
-        petMesh.rotation.y = Math.sin(time * 0.5) * 0.3
+      // FLOATING ANIMATION (still works)
+      if (petGroup) {
+        petGroup.position.y = 0.5 + Math.sin(time * 2) * 0.05
+        petGroup.rotation.y = Math.sin(time * 0.5) * 0.3
       }
 
       toys.forEach((toy, index) => {
-        if (toy instanceof THREE.Mesh) {
-          toy.rotation.y += 0.01 * (index + 1)
-          toy.position.y = toy.userData.originalY || toy.position.y
-          toy.position.y += Math.sin(time * 2 + index) * 0.02
-          if (!toy.userData.originalY) {
-            toy.userData.originalY = toy.position.y
-          }
-        } else if (toy instanceof THREE.Group) {
-          toy.rotation.y += 0.01 * (index + 1)
-          toy.position.y = toy.userData.originalY || toy.position.y
-          toy.position.y += Math.sin(time * 2 + index) * 0.02
-          if (!toy.userData.originalY) {
-            toy.userData.originalY = toy.position.y
-          }
-        }
+        toy.rotation.y += 0.01 * (index + 1)
+        toy.position.y = toy.userData.originalY || toy.position.y
+        toy.position.y += Math.sin(time * 2 + index) * 0.02
+        if (!toy.userData.originalY) toy.userData.originalY = toy.position.y
       })
 
       const currentTime = getGameTime(pet.createdAt)
@@ -297,9 +339,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
 
     return () => {
       window.removeEventListener("resize", handleResize)
-      if (sceneRef.current?.animationId) {
-        cancelAnimationFrame(sceneRef.current.animationId)
-      }
+      if (sceneRef.current?.animationId) cancelAnimationFrame(sceneRef.current.animationId)
       if (mountRef.current && renderer.domElement && mountRef.current.contains(renderer.domElement)) {
         mountRef.current.removeChild(renderer.domElement)
       }
@@ -320,11 +360,8 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
         const startTime = Date.now()
 
         const moveToy = () => {
-          const elapsed = Date.now() - startTime
-          const progress = Math.min(elapsed / duration, 1)
-
+          const progress = Math.min((Date.now() - startTime) / duration, 1)
           toy.position.lerpVectors(startPosition, targetPosition, progress)
-
           if (progress < 1) {
             requestAnimationFrame(moveToy)
           } else {
@@ -386,7 +423,9 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
           </Button>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground">Click toys to play with {pet.name}!</p>
+        <p className="text-center text-xs text-muted-foreground">
+          Click toys to play with {pet.name}!
+        </p>
       </CardContent>
     </Card>
   )
