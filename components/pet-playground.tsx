@@ -89,26 +89,23 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
     backWall.receiveShadow = true
     scene.add(backWall)
 
-    // ---------------------------------------------------------
-    //  PET MODEL LOADING (GLTF folder loader with fallback)
-    // ---------------------------------------------------------
+   //Model Loading
     const loader = new GLTFLoader()
     const petGroup = new THREE.Group()
     petGroup.position.set(0, 0.5, 0)
     scene.add(petGroup)
 
-    // Editable per-pet model transform config (tweak later)
     const PET_MODEL_CONFIG: Record<
       string,
       { path: string; scale: number; position: [number, number, number] }
     > = {
-      dog: { path: "/models/dog/scene.gltf", scale: 1, position: [0, 0, 0] },
+      dog: { path: "/models/dog/scene.gltf", scale: 1, position: [0, 0.5, 0] },
       cat: { path: "/models/cat/scene.gltf", scale: 1, position: [0, 0, 0] },
-      rabbit: { path: "/models/rabbit/scene.gltf", scale: 1, position: [0, 0, 0] },
+      rabbit: { path: "/models/rabbit/scene.gltf", scale: 0.5, position: [0, 0, 0] },
       hamster: { path: "/models/hamster/scene.gltf", scale: 1, position: [0, 0, 0] },
     }
 
-    // --- Create original primitive fallback (exactly as before) ---
+    //Fallback for failed models
     let petColor = 0x8b4513
     let bodySize = { width: 0.8, height: 0.6, depth: 1.2 }
 
@@ -131,7 +128,6 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
         break
     }
 
-    // Build fallback primitive exactly like original
     const bodyGeometry = new THREE.BoxGeometry(bodySize.width, bodySize.height, bodySize.depth)
     const petMaterial = new THREE.MeshStandardMaterial({ color: petColor })
     const body = new THREE.Mesh(bodyGeometry, petMaterial)
@@ -177,11 +173,7 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
       petGroup.add(tail)
     }
 
-    // Save a reference to the fallback in case GLTF replaces it later
-    // We'll keep petGroup as root (we replace children if model loads)
-    // ---------------------------------------------------------
-
-    // Attempt to load GLTF model from folder (path from config)
+    //Model Loading
     const cfg = PET_MODEL_CONFIG[pet.type] || { path: `/models/${pet.type}/scene.gltf`, scale: 1, position: [0, 0, 0] }
 
     loader.load(
@@ -190,11 +182,9 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
         try {
           const model = gltf.scene.clone(true)
 
-          // Clear fallback children (leave petGroup root)
           while (petGroup.children.length) {
             const child = petGroup.children[0]
             petGroup.remove(child)
-            // dispose geometries/materials of fallback to be safe
             if ((child as THREE.Mesh).geometry) {
               try {
                 ;((child as THREE.Mesh).geometry as THREE.BufferGeometry).dispose()
@@ -210,15 +200,10 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
             }
           }
 
-          // Apply config transform
           model.traverse((child) => {
             if (child instanceof THREE.Mesh) {
               child.castShadow = true
               child.receiveShadow = true
-              // ensure standard material can receive lights
-              if (child.material && (child.material as any).isMeshStandardMaterial === false) {
-                // leave as-is — usually gltf materials are fine
-              }
             }
           })
 
@@ -231,19 +216,17 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
             sceneRef.current.petMesh = petGroup
           }
         } catch (err) {
-          console.error("Error processing loaded GLTF for", pet.type, err)
+          console.error("Error processing GLTF for", pet.type, err)
         }
       },
       undefined,
       (err) => {
-        // If the model fails to load, keep the original primitive fallback in place
+        //Fallback
         console.warn(`Failed to load GLTF for ${pet.type} at ${cfg.path}. Using fallback.`, err)
       }
     )
 
-    // ---------------------------------------------------------
-
-    // Setup Toy Geometry (unchanged)
+    //Setup Toy Geometry
     const toys: (THREE.Mesh | THREE.Object3D)[] = []
 
     const ballGeometry = new THREE.SphereGeometry(0.3, 16, 16)
@@ -306,7 +289,6 @@ export function PetPlayground({ pet, onAction }: PetPlaygroundProps) {
 
       time += 0.01
 
-      // FLOATING ANIMATION (still works)
       if (petGroup) {
         petGroup.position.y = 0.5 + Math.sin(time * 2) * 0.05
         petGroup.rotation.y = Math.sin(time * 0.5) * 0.3
