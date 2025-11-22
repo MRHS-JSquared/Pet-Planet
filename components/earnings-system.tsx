@@ -4,10 +4,12 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
+//Earning Structure
 interface EarningsSystemProps {
   onEarnMoney: (amount: number, description: string) => void
 }
 
+//Chores list
 const chores = [
   { id: "dishes", label: "Wash Dishes", icon: "🍽️", reward: 10, time: 120 },
   { id: "vacuum", label: "Vacuum Room", icon: "🧹", reward: 15, time: 120 },
@@ -25,6 +27,7 @@ export function EarningsSystem({ onEarnMoney }: EarningsSystemProps) {
     const now = Date.now()
     const cooldownEnd = cooldowns.get(chore.id) || 0
 
+    //Cooldown check (disabled)
     if (now < cooldownEnd) {
       const remainingSeconds = Math.ceil((cooldownEnd - now) / 1000)
       alert(`Please wait ${remainingSeconds} seconds before doing this chore again!`)
@@ -34,12 +37,12 @@ export function EarningsSystem({ onEarnMoney }: EarningsSystemProps) {
     onEarnMoney(chore.reward, chore.label)
     setCompletedChores((prev) => new Set(prev).add(chore.id))
 
-    // Set cooldown (30 seconds for demo purposes)
+    //Set cooldown
     const newCooldowns = new Map(cooldowns)
     newCooldowns.set(chore.id, now + chore.time*1000)
     setCooldowns(newCooldowns)
 
-    // Remove from completed after animation
+    //Remove from completed after animation
     setTimeout(() => {
       setCompletedChores((prev) => {
         const next = new Set(prev)
