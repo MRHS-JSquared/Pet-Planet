@@ -12,46 +12,48 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useState } from "react"
 
+//Message structure
 interface Message {
   type: "user" | "bot"
   text: string
 }
 
+//FAQ list
 const faqData = [
   {
-    question: "What is Virtual Pet Care?",
+    question: "What is Pet Planet?",
     answer:
-      "Virtual Pet Care is an interactive game that teaches financial responsibility through pet ownership. You create and care for a virtual pet while managing a budget, learning valuable lessons about earning, spending, and saving money.",
+      "Pet Planet is an interactive game that teaches financial responsibility through pet ownership. You must create and care for a virtual pet while managing a budget, learning valuable lessons about earning, spending, and saving money.",
   },
   {
     question: "How do I get started?",
     answer:
-      "Simply create your pet by choosing a name and type (dog, cat, rabbit, or hamster). You'll start with $100 to care for your pet. Use the action buttons to feed, play, clean, and care for your pet.",
+      "Simply create your pet by choosing a name and type (dog, cat, rabbit, or hamster). You will start with $100 to care for your pet. Use the action buttons to feed, play, clean, and care for your pet.",
   },
   {
     question: "How do I earn money?",
     answer:
-      "Complete chores to earn money! Available chores include washing dishes ($10), vacuuming ($15), doing laundry ($12), completing homework ($20), yard work ($25), and organizing your closet ($18).",
+      "Complete chores to earn money. Available chores include: washing dishes, vacuuming, doing laundry, completing homework, yard work, and organizing your closet.",
   },
   {
     question: "What happens if I run out of money?",
     answer:
-      "If your balance gets too low, you won't be able to purchase care items for your pet. Make sure to complete chores regularly to maintain a healthy balance and keep your pet happy!",
+      "If your balance gets too low, you won't be able to purchase care items for your pet. Make sure to complete chores regularly to maintain a healthy balance and keep your pet happy.",
   },
   {
     question: "How do pet stats work?",
     answer:
-      "Your pet has five main stats: Hunger, Happiness, Health, Energy, and Hygiene. Each stat ranges from 0-100%. These stats decrease over time and must be maintained through various care actions. Low stats will make your pet sad or sick.",
+      "Your pet has five main stats: Hunger, Happiness, Health, Energy, and Hygiene. Each stat ranges from 0-100. These stats decrease over time and must be maintained through various care actions. Low stats will make your pet sad or sick, and it may even die.",
   },
   {
     question: "What are the different care actions?",
     answer:
-      "Feed ($5) increases hunger and health. Play ($3) increases happiness but uses energy. Rest (Free) restores energy and health. Clean ($4) improves hygiene and happiness. Vet Visit ($25) fully restores health. Toys ($15) and Treats ($8) boost happiness.",
+      "Feed increases hunger and health. Play increases happiness but uses energy. Rest restores energy and health. Clean improves hygiene and happiness. Vet Visit restores health. Toys and Treats boost happiness.",
   },
   {
     question: "How does my pet grow?",
     answer:
-      "Your pet gains experience points (XP) from care actions. Every 100 XP, your pet levels up. Pets evolve through three stages: Baby (levels 1-4), Child (levels 5-9), and Adult (level 10+).",
+      "Your pet gains experience points from care actions. Every 100 XP, your pet levels up. Pets evolve through three stages: Baby (levels 1-4), Child (levels 5-9), and Adult (level 10+).",
   },
   {
     question: "What is the 3D playground?",
@@ -68,7 +70,12 @@ const faqData = [
     answer:
       "Yes! All your pet data, money, and transaction history are automatically saved to your browser's local storage. You can close the app and return later to continue caring for your pet.",
   },
+  {
+    question: "Does the game run while I'm not active?",
+    answer: "Yes, the game runs while inactive, including when not on the tab. In order to pause the game, please return to the home page."
+  }
 ]
+
 
 export function FAQChatbot() {
   const [messages, setMessages] = useState<Message[]>([
