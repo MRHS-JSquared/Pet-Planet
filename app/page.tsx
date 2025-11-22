@@ -3,8 +3,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FAQDialog } from "@/components/faq-dialog"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AchievementsSection } from "@/components/achievements-section"
 import { GameDirections } from "@/components/game-directions"
 
@@ -26,21 +24,19 @@ export default function HomePage() {
         {/* Hero Section */}
         <div className="space-y-10">
           <div className="flex justify-center gap-6 text-8xl drop-shadow-xl">
-            <span className="animate-bounce-slow">🐕</span>
+            <span className="animate-bounce-slow">🌍</span>
             <span className="animate-bounce-slow" style={{ animationDelay: "0.2s" }}>
-              🐱
+              🐕
             </span>
             <span className="animate-bounce-slow" style={{ animationDelay: "0.4s" }}>
-              🐰
+              🐱
             </span>
             <span className="animate-bounce-slow" style={{ animationDelay: "0.6s" }}>
-              🐹
+              🐰
             </span>
           </div>
 
-          <h1 className="text-6xl font-bold tracking-tight text-foreground sm:text-7xl drop-shadow-md">
-            Virtual Pet Care
-          </h1>
+          <h1 className="text-6xl font-bold tracking-tight text-foreground sm:text-7xl drop-shadow-md">Pet Planet</h1>
 
           <p className="mx-auto max-w-2xl text-xl text-muted-foreground sm:text-2xl opacity-90">
             A calming, interactive world of pets & responsibility.
@@ -51,49 +47,25 @@ export default function HomePage() {
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Main Card */}
-            <div className="rounded-3xl border bg-card/40 p-10 shadow-2xl backdrop-blur-xl space-y-10">
-              <div className="grid sm:grid-cols-3 gap-6">
-                <div className="rounded-2xl bg-secondary/10 p-6 space-y-3">
-                  <div className="text-5xl">💰</div>
-                  <h3 className="font-semibold text-lg">Budget</h3>
+            <div className="rounded-3xl border bg-card/40 p-10 shadow-2xl backdrop-blur-xl space-y-8">
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="rounded-2xl bg-secondary/10 p-4 space-y-2">
+                  <div className="text-4xl">💰</div>
+                  <h3 className="font-semibold">Budget</h3>
                 </div>
 
-                <div className="rounded-2xl bg-primary/10 p-6 space-y-3">
-                  <div className="text-5xl">🎯</div>
-                  <h3 className="font-semibold text-lg">Care</h3>
+                <div className="rounded-2xl bg-primary/10 p-4 space-y-2">
+                  <div className="text-4xl">🎯</div>
+                  <h3 className="font-semibold">Care</h3>
                 </div>
 
-                <div className="rounded-2xl bg-accent/10 p-6 space-y-3">
-                  <div className="text-5xl">📊</div>
-                  <h3 className="font-semibold text-lg">Progress</h3>
+                <div className="rounded-2xl bg-accent/10 p-4 space-y-2">
+                  <div className="text-4xl">📊</div>
+                  <h3 className="font-semibold">Progress</h3>
                 </div>
               </div>
 
-              <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-0">
-                <CardHeader>
-                  <CardTitle className="text-lg">Typical Earnings Growth</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <LineChart data={earningsData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="day" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => `$${value}`} />
-                      <Line
-                        type="monotone"
-                        dataKey="earnings"
-                        stroke="hsl(var(--primary))"
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <div className="flex flex-col gap-4 pt-4">
+              <div className="flex flex-col gap-3 pt-2">
                 <Link href="/pet">
                   <Button size="lg" className="w-full text-lg rounded-xl shadow-md">
                     <span className="mr-2">🚀</span>

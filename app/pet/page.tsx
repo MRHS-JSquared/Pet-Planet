@@ -30,6 +30,7 @@ export default function VirtualPetPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [lastUpdate, setLastUpdate] = useState(Date.now())
   const [isDead, setIsDead] = useState(false)
+  const [pendingAchievement, setPendingAchievement] = useState<any>(null)
 
   // Load pet data from localStorage on mount
   useEffect(() => {
@@ -114,6 +115,10 @@ export default function VirtualPetPage() {
       completedActionsToday: {},
       daysPassed: 0,
       unlockedAchievements: [],
+      cleanCount: 0,
+      vetCount: 0,
+      treatCount: 0,
+      sleepCount: 0,
     }
     setPet(petWithTracking)
     setIsDead(false)
@@ -133,6 +138,8 @@ export default function VirtualPetPage() {
 
       const updatedPet = { ...prevPet }
       const today = getTodayDate()
+      const newUnlockedAchievements = [...(updatedPet.unlockedAchievements || [])]
+      let achievementUnlocked: any = null
 
       switch (action) {
         case "feed":
@@ -155,10 +162,20 @@ export default function VirtualPetPage() {
         case "clean":
           updatedPet.hygiene = Math.min(100, updatedPet.hygiene + 35)
           updatedPet.happiness = Math.min(100, updatedPet.happiness + 10)
+          updatedPet.cleanCount = (updatedPet.cleanCount || 0) + 1
+          if (updatedPet.cleanCount === 20 && !newUnlockedAchievements.includes("clean_freak")) {
+            newUnlockedAchievements.push("clean_freak")
+            achievementUnlocked = { title: "Clean Freak", unlockedIcon: "✨" }
+          }
           break
         case "vet":
           updatedPet.health = 100
           updatedPet.happiness = Math.max(0, updatedPet.happiness - 10)
+          updatedPet.vetCount = (updatedPet.vetCount || 0) + 1
+          if (updatedPet.vetCount === 10 && !newUnlockedAchievements.includes("veterinarian")) {
+            newUnlockedAchievements.push("veterinarian")
+            achievementUnlocked = { title: "Veterinarian", unlockedIcon: "🏥" }
+          }
           break
         case "toy":
           updatedPet.happiness = Math.min(100, updatedPet.happiness + 30)
@@ -167,10 +184,20 @@ export default function VirtualPetPage() {
         case "treat":
           updatedPet.happiness = Math.min(100, updatedPet.happiness + 20)
           updatedPet.hunger = Math.min(100, updatedPet.hunger + 15)
+          updatedPet.treatCount = (updatedPet.treatCount || 0) + 1
+          if (updatedPet.treatCount === 50 && !newUnlockedAchievements.includes("treat_giver")) {
+            newUnlockedAchievements.push("treat_giver")
+            achievementUnlocked = { title: "Treat Giver", unlockedIcon: "🍪" }
+          }
           break
         case "sleep":
           updatedPet.energy = Math.min(100, updatedPet.energy + 50)
           updatedPet.health = Math.min(100, updatedPet.health + 15)
+          updatedPet.sleepCount = (updatedPet.sleepCount || 0) + 1
+          if (updatedPet.sleepCount === 30 && !newUnlockedAchievements.includes("night_owl")) {
+            newUnlockedAchievements.push("night_owl")
+            achievementUnlocked = { title: "Night Owl", unlockedIcon: "🌙" }
+          }
           break
       }
 
@@ -180,6 +207,10 @@ export default function VirtualPetPage() {
       if (newLevel > updatedPet.level) {
         updatedPet.level = newLevel
         updatedPet.stage = newLevel < 5 ? "baby" : newLevel < 10 ? "child" : "adult"
+        if (newLevel === 10 && !newUnlockedAchievements.includes("pet_master")) {
+          newUnlockedAchievements.push("pet_master")
+          achievementUnlocked = { title: "Pet Master", unlockedIcon: "👑" }
+        }
       }
 
       if (action !== "sleep") {
@@ -191,6 +222,12 @@ export default function VirtualPetPage() {
 
       if (updatedPet.health <= 0) {
         setIsDead(true)
+      }
+
+      updatedPet.unlockedAchievements = newUnlockedAchievements
+
+      if (achievementUnlocked) {
+        setPendingAchievement(achievementUnlocked)
       }
 
       return updatedPet
@@ -205,7 +242,26 @@ export default function VirtualPetPage() {
   }
 
   const handleEarnMoney = (amount: number, description: string) => {
-    setMoney((prev) => prev + amount)
+    setMoney((prev) => {
+      const newMoney = prev + amount
+      setPet((prevPet) => {
+        if (!prevPet) return null
+        const newUnlockedAchievements = [...(prevPet.unlockedAchievements || [])]
+        let achievementUnlocked = null
+
+        if (newMoney >= 500 && !newUnlockedAchievements.includes("financial_master")) {
+          newUnlockedAchievements.push("financial_master")
+          achievementUnlocked = { title: "Financial Master", unlockedIcon: "💎" }
+          setPendingAchievement(achievementUnlocked)
+        }
+
+        return {
+          ...prevPet,
+          unlockedAchievements: newUnlockedAchievements,
+        }
+      })
+      return newMoney
+    })
     addTransaction(description, amount)
   }
 

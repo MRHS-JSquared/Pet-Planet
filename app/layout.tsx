@@ -8,7 +8,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Virtual Pet Care - Learn Pet Ownership & Budgeting",
+  title: "Pet Planet - Virtual Pet Care Game",
   description: "A fun virtual pet game that teaches financial responsibility and pet care",
   generator: "v0.app",
 }

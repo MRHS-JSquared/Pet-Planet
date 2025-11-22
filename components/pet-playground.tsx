@@ -13,29 +13,22 @@ interface PetPlaygroundProps {
 }
 
 function getSkyColor(hour: number): THREE.Color {
-  // Day colors (bright sky blue)
   const dayColor = new THREE.Color(0x87ceeb)
-  // Night colors (deep indigo)
   const nightColor = new THREE.Color(0x1a1a2e)
 
-  // Smooth transition: 6 AM to 7 AM (sunrise), 7 PM to 8 PM (sunset)
-  // Before 6 AM or after 8 PM: full night
-  // 6 AM to 7 AM: fade from night to day
-  // 7 AM to 7 PM: full day
-  // 7 PM to 8 PM: fade from day to night
-  // After 8 PM to next 6 AM: full night
+  let t = 0
 
   if (hour >= 7 && hour < 19) {
     // Full day (7 AM to 7 PM)
     return dayColor
   } else if (hour === 6) {
-    // Sunrise: 6 AM to 7 AM
-    const t = 0.5 // Mid-transition
-    return nightColor.clone().lerp(dayColor, t)
+    // Sunrise: 6 AM to 7 AM - smooth fade
+    t = 0.5
+    return new THREE.Color().lerpColors(nightColor, dayColor, t)
   } else if (hour === 19) {
-    // Sunset: 7 PM to 8 PM
-    const t = 0.5 // Mid-transition
-    return dayColor.clone().lerp(nightColor, t)
+    // Sunset: 7 PM to 8 PM - smooth fade
+    t = 0.5
+    return new THREE.Color().lerpColors(dayColor, nightColor, t)
   } else {
     // Full night (8 PM to 6 AM)
     return nightColor

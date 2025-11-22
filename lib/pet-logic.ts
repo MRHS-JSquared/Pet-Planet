@@ -70,28 +70,30 @@ export function getTodayDate(): string {
 }
 
 export function skipToNextDay(pet: Pet): Pet {
-  const now = Date.now()
   const gameTime = getGameTime(pet.createdAt)
 
-  // Calculate how many milliseconds until 7 AM (next day)
-  // Current: gameMinutes from start of day
-  // Target: 7 AM of next day = 1440 minutes (full day) + 420 minutes (7 AM) = 1860 minutes
-  const currentGameMinutes = Math.floor(((now - pet.createdAt) / 1000) * 12) % (24 * 60)
-  const minutesUntil7AM = 24 * 60 - currentGameMinutes + 7 * 60 // Wrap to next 7 AM
+  if (gameTime.isPeriod !== "night") {
+    return pet
+  }
 
-  // Advance createdAt so that getGameTime returns 7 AM
-  const adjustedCreatedAt = pet.createdAt - ((minutesUntil7AM - 7 * 60) * 1000) / 12
+  // Current time in minutes from midnight
+  const currentTotalMinutes = gameTime.hour * 60 + gameTime.minute
+
+  // Minutes until 7 AM tomorrow (calculate how many minutes from now to 7 AM)
+  // If it's 20:00 (8 PM), we need 11 hours to reach 7 AM = 660 minutes
+  const minutesUntil7AM = 24 * 60 - currentTotalMinutes + 7 * 60
+
+  // Convert game minutes to real milliseconds and subtract from createdAt to skip forward
+  const skipMs = (minutesUntil7AM / 12) * 1000
 
   return {
     ...pet,
-    createdAt: adjustedCreatedAt,
-    lastGameDay: getTodayGameDay(adjustedCreatedAt),
+    createdAt: pet.createdAt - skipMs,
+    lastGameDay: getTodayGameDay(pet.createdAt - skipMs),
     completedActionsToday: {},
-    // Drastically reduce stats from skipping night
     hunger: Math.max(0, pet.hunger - 40),
     energy: Math.max(0, pet.energy - 30),
     hygiene: Math.max(0, pet.hygiene - 25),
-    daysPassed: (pet.daysPassed || 0) + 1,
   }
 }
 
